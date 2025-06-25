@@ -10,21 +10,31 @@ export const getDataverses = async ({
   order,
   page,
   perPage,
-  type,
+  types,
+  subtree, // No default value
 }: {
   q?: string;
   sort: string;
   order: string;
   page: number;
   perPage: number;
-  type?: string;
+  types?: string[];
+  subtree?: string;
 }) => {
-  console.log(`${baseURL}/dataverse/getdata`, {
-    params: { q, type, sort, order, page, per_page: perPage },
-  });
-  const res = await axios.get(`${baseURL}/dataverse/getdata`, {
-    params: { q, type, sort, order, page, per_page: perPage },
-  });
+  const payload = {
+    q: q || "*",
+    sort,
+    order,
+    page,
+    per_page: perPage,
+    ...(types && { types }),
+    ...(subtree && { subtree }), // Include subtree only if defined
+  };
+
+  console.log(`${baseURL}/dataverse/getdata`, payload);
+
+  const res = await axios.post(`${baseURL}/dataverse/getdata`, payload);
+
   console.log(res);
 
   return {
