@@ -80,6 +80,10 @@
 import axios from "axios";
 import redis from "../../config/redis";
 import { DataverseSearchResponse } from "../../types/dataverse";
+import {
+  ApiConfig,
+  getAllFacetableMetadataFields,
+} from "@iqss/dataverse-client-javascript";
 
 const BASE = process.env.DATAVERSE_BASE_URL; // || "https://demo.dataverse.org/api"
 
@@ -93,7 +97,6 @@ export const fetchData = async (
   subtree?: string // Added subtree parameter
 ): Promise<DataverseSearchResponse> => {
   const start = (page - 1) * perPage;
-
   const searchParams = new URLSearchParams();
   searchParams.append("q", q);
   searchParams.append("start", start.toString());
@@ -115,13 +118,20 @@ export const fetchData = async (
     const response = await axios.get(
       `${BASE}/search?${searchParams.toString()}`
     );
-
+    const dataveresMetadata = await getAllFacetableMetadataFields.execute();
+    const dataverse = await getDataverse(alias);
+    console.log("dataverse", dataveresMetadata);
+    const dataResponse = {
+      status: "1000",
+      dataveresResponse: response.data.data,
+      dataveresMetadata: dataveresMetadata,
+    };
     if (response.status === 200 && response.data?.data?.items?.length > 0) {
       console.log("store fetchData key", cacheKey);
-      await redis.set(cacheKey, JSON.stringify(response.data), "EX", 300);
+      await redis.set(cacheKey, JSON.stringify(dataResponse), "EX", 300);
     }
 
-    return response.data;
+    return dataResponse;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       throw {
