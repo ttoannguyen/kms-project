@@ -84,6 +84,7 @@ import {
   ApiConfig,
   getAllFacetableMetadataFields,
 } from "@iqss/dataverse-client-javascript";
+import { GetDataverseVersion } from "@iqss/dataverse-client-javascript/dist/info/domain/useCases/GetDataverseVersion";
 
 const BASE = process.env.DATAVERSE_BASE_URL; // || "https://demo.dataverse.org/api"
 
@@ -119,7 +120,7 @@ export const fetchData = async (
       `${BASE}/search?${searchParams.toString()}`
     );
     const dataveresMetadata = await getAllFacetableMetadataFields.execute();
-    const dataverse = await getDataverse(alias);
+    const dataverse = await ;
     console.log("dataverse", dataveresMetadata);
     const dataResponse = {
       status: "1000",
