@@ -1,16 +1,23 @@
-# Build stage
-FROM node:20-alpine as builder
-
+# Stage 1: Development
+FROM node:18 AS dev
 WORKDIR /app
-COPY package*.json ./
+COPY package.json .
 RUN npm install
 COPY . .
-COPY .env.production .env
+EXPOSE 3001
+CMD ["npm", "run", "dev"]
+
+# Stage 2: Build
+FROM node:18 AS build
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
 RUN npm run build
 
-# Serve stage
+# Stage 3: Production
 FROM nginx:alpine
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

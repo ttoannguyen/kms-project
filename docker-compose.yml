@@ -1,146 +1,79 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  backend:
+  startfarm-backend:
     build:
       context: ./backend
-    container_name: kms_backend
-    env_file:
-      - ./backend/.env.production
-    volumes:
-      - ./backend/.env.production:/app/.env.production
-    ports:
-      - "4000:4000"
-    depends_on:
-      - redis
-      - postgres
-      # postgres_custom:
-      #   condition: service_healthy
-      # redis:
-      #   condition: service_started
+      target: ${ENV:-prod}
+    container_name: startfarm-backend
     networks:
-      - kms
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
+      - dataverse
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${BACKEND_PORT:-4000}
+      - API_BASE_URL=${API_BASE_URL:-/api/v1}
+      - DB_HOST=${DB_HOST:-dev_postgres}
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - DB_NAME=${DB_NAME:-kms}
+      - DB_SYNC=${DB_SYNC:-false}
+      - DB_LOGGING=${DB_LOGGING:-true}
+      - REDIS_URL=${REDIS_URL:-redis://kms_redis:6379}
+      - DATAVERSE_BASE_URL=${DATAVERSE_BASE_URL:-http://dataverse:8080/api}
+      - DATAVERSE_API_TOKEN=${DATAVERSE_API_TOKEN}
+      - JWT_SECRET=${JWT_SECRET}
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - kms_redis
+      - dev_postgres
+    restart: unless-stopped
 
-  frontend:
+  startfarm-frontend:
     build:
       context: ./frontend
-    container_name: kms_frontend
-    env_file:
-      - ./frontend/.env.production
-    volumes:
-      - ./frontend/.env.production:/app/.env.production
-    ports:
-      - "80:80"
+      target: ${ENV:-prod}
+    container_name: startfarm-frontend
     networks:
-      - kms
+      - dataverse
+    environment:
+      - VITE_NODE_ENV=${VITE_NODE_ENV:-production}
+      - VITE_API_URL=${VITE_API_URL:-http://localhost/api/v1}
+      - VITE_DATAVERSE_URL=${VITE_DATAVERSE_URL:-http://localhost/dataverse}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: unless-stopped
 
-  redis:
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    ports:
+      - "${NGINX_PORT:-80}:80"
+    networks:
+      - dataverse
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - startfarm-backend
+      - startfarm-frontend
+      - dev_dataverse
+    restart: unless-stopped
+
+  kms_redis:
     image: redis:7
     container_name: kms_redis
-    ports:
-      - "6379:6379"
     networks:
-      - kms
-
-      
-  postgres:
-    image: postgres:17
-    container_name: kms_postgres
-    restart: always
-    environment:
-      POSTGRES_DB: kms
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-    ports:
-      - "10000:5432" # Host:Container
+      - dataverse
     volumes:
-      - pgdata_custom:/var/lib/postgresql/kms
-    networks:
-      - kms
-    # healthcheck:
-    #   test: ["CMD", "pg_isready", "-U", "postgres"]
-    #   interval: 5s
-    #   timeout: 3s
-    #   retries: 5
-
-volumes:
-  pgdata_custom:
+      - redis-data:/data
+    restart: unless-stopped
 
 networks:
-  kms:
-    driver: bridge
+  dataverse:
+    external: true
 
-# version: "3.8"
-
-# services:
-#   backend:
-#     build:
-#       context: ./backend
-#     container_name: kms_backend
-#     env_file:
-#       - ./backend/.env.production
-#     volumes:
-#       - ./backend/.env.production:/app/.env.production
-#     ports:
-#       - "4000:4000"
-#     depends_on:
-#       postgres_custom:
-#         condition: service_healthy
-#       redis:
-#         condition: service_started
-#     networks:
-#       - kms-network
-#     extra_hosts:
-#       - "host.docker.internal:host-gateway"
-
-#   frontend:
-#     build:
-#       context: ./frontend
-#     container_name: kms_frontend
-#     env_file:
-#       - ./frontend/.env.production
-#     volumes:
-#       - ./frontend/.env.production:/app/.env.production
-#     ports:
-#       - "80:80"
-#     networks:
-#       - kms-network
-
-#   redis:
-#     image: redis:7
-#     container_name: kms_redis
-#     ports:
-#       - "6379:6379"
-#     networks:
-#       - kms-network
-      
-#   postgres_custom:
-#     image: postgres:17
-#     container_name: kms_postgres
-#     restart: always
-#     environment:
-#       POSTGRES_DB: kms
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: admin
-#     ports:
-#       - "10000:15432"
-#     volumes:
-#       - pgdata_custom:/var/lib/postgresql/kms
-#     networks:
-#       - kms-network
-#     healthcheck:
-#       test: ["CMD", "pg_isready", "-U", "postgres"]
-#       interval: 5s
-#       timeout: 3s
-#       retries: 5
-
-
-# volumes:
-#   pgdata_custom:
-
-# networks:
-#   kms-network:
-#     driver: bridge
-
+volumes:
+  redis-data:

@@ -1,0 +1,8 @@
+.dataverse-container {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    padding: 20px;
+}
+.dataverse-container h1, .dataverse-container h2, .dataverse-container p {
+    margin: 10px 0;
+}

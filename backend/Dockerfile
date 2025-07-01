@@ -1,26 +1,18 @@
-# 1. Base image
-FROM node:20-alpine
-
-# 2. Set working directory
+# Stage 1: Development
+FROM node:18 AS dev
 WORKDIR /app
-
-# 3. Copy package files and install dependencies
-COPY package*.json ./
+COPY package.json .
 RUN npm install
-
-# 4. Copy source code
 COPY . .
-
-# 5. Set env (for local dev only, already mounted via volume)
-COPY .env.production .env
-
-# 6. Build TypeScript
-RUN npm run build
-
-# 7. Copy wait script
-COPY wait-for-postgres.sh .
-RUN chmod +x wait-for-postgres.sh
-
-# 8. Expose port and run
 EXPOSE 4000
-CMD ["./wait-for-postgres.sh"]
+CMD ["npm", "run", "dev"]
+
+# Stage 2: Production
+FROM node:18 AS prod
+WORKDIR /app
+COPY package.json .
+RUN npm install --only=production
+COPY . .
+RUN npm run build
+EXPOSE 4000
+CMD ["node", "dist/index.js"]
