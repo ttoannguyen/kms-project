@@ -2,7 +2,6 @@ services:
   startfarm-backend:
     build:
       context: ./backend
-      target: ${ENV:-prod}
     container_name: startfarm-backend
     networks:
       - dataverse
@@ -32,14 +31,11 @@ services:
   startfarm-frontend:
     build:
       context: ./frontend
-      target: ${ENV:-prod}
     container_name: startfarm-frontend
     networks:
       - dataverse
-    environment:
-      - VITE_NODE_ENV=${VITE_NODE_ENV:-production}
-      - VITE_API_URL=${VITE_API_URL:-http://localhost/api/v1}
-      - VITE_DATAVERSE_URL=${VITE_DATAVERSE_URL:-http://localhost/dataverse}
+    ports:
+      - "${NGINX_PORT:-80}:80"
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -57,7 +53,7 @@ services:
     depends_on:
       - startfarm-backend
       - startfarm-frontend
-      # - dev_dataverse
+      - dev_dataverse
     restart: unless-stopped
 
   postgres-db:
