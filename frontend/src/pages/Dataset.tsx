@@ -28,7 +28,7 @@ import formatBytes from "@/helpers/format/formatSizeData";
 // import "../../global.css";
 
 const Dataset = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const persistentId = searchParams.get("persistentId");
   const location = useLocation();
   const dataverseApi = import.meta.env.VITE_DATAVERSE_URL;

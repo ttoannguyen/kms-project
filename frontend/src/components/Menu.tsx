@@ -34,6 +34,12 @@ const menuItems: MenuItem[] = [
     label: "Blog",
     path: "/blog",
   },
+
+  {
+    icon: <Database size={16} />,
+    label: "Add Dataverse",
+    path: "/dataverse/create?ownerId=1",
+  },
 ];
 
 const Menu: React.FC = () => {

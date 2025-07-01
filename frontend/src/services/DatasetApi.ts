@@ -1,7 +1,8 @@
 import type { DatasetInterface } from "@/types/datasetInterface";
 import axios from "axios";
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const apiUrl =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1";
 
 const datasetApi = {
   getDataset: async (
@@ -12,7 +13,7 @@ const datasetApi = {
       const response = await axios.get(
         `${apiUrl}/dataset/getDataset?persistentId=${id}`
       );
-      console.log(response.data)
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error("Init failed", error);
