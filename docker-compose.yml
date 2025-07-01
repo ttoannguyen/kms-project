@@ -57,7 +57,7 @@ services:
     depends_on:
       - startfarm-backend
       - startfarm-frontend
-      - dev_dataverse
+      # - dev_dataverse
     restart: unless-stopped
 
   postgres-db:
