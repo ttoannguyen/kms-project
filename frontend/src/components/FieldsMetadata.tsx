@@ -29,6 +29,8 @@ const FieldsMetadata: React.FC<ChildProp> = ({
     null
   );
 
+  const conditionalLabel: string[] = ["producerName"];
+
   useEffect(() => {
     const getMetadataItem = async (): Promise<void> => {
       const tempMetadataItem: MetadataItemResponse | null =
@@ -70,11 +72,69 @@ const FieldsMetadata: React.FC<ChildProp> = ({
                     name=""
                     id=""
                     className="w-[15px] h-[15px] mr-2"
+                    defaultChecked
+                    disabled={readOnly}
                   />
                   <span>{capitalizeFirstLetter(field.name)}</span>
                 </label>
-                {field.isRequired && <span> Required by Dataverse</span>}
+                {field.isRequired ? (
+                  <span> Required by Dataverse</span>
+                ) : (
+                  <div>
+                    <label htmlFor="">
+                      <input type="radio" name="" id="" />
+                      Required
+                    </label>
+
+                    {Array.isArray(conditionalLabel) &&
+                    conditionalLabel.includes(field.name || "") ? (
+                      <label htmlFor="">
+                        <input type="radio" name="" id="" />
+                        Conditionally Required
+                      </label>
+                    ) : (
+                      <label htmlFor="">
+                        <input type="radio" name="" id="" />
+                        Optional
+                      </label>
+                    )}
+                  </div>
+                )}
               </div>
+
+              {field?.childFields &&
+                Object.values(field.childFields).map((childField) => (
+                  <div className="flex flex-col  pl-[50px] pr-4 border-b border-[#ccc] py-2 s">
+                    {" "}
+                    <div className="flex  justify-between ">
+                      <span className="flex-1">{childField.displayName}</span>
+
+                      {childField.isRequired ? (
+                        <span> Required by Dataverse</span>
+                      ) : (
+                        <div>
+                          <label htmlFor="">
+                            <input type="radio" name="" id="" />
+                            Required
+                          </label>
+
+                          {Array.isArray(conditionalLabel) &&
+                          conditionalLabel.includes(childField.name || "") ? (
+                            <label htmlFor="">
+                              <input type="radio" name="" id="" />
+                              Conditionally Required
+                            </label>
+                          ) : (
+                            <label htmlFor="">
+                              <input type="radio" name="" id="" />
+                              Optional
+                            </label>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
             </div>
           ))}
         </div>
