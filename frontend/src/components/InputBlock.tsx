@@ -18,6 +18,8 @@ const InputBlock: React.FC<ChildProps> = ({
   setInputValue,
   require,
 }) => {
+  const url = import.meta.env.VITE_DATAVERSE_IDENTIFIER;
+
   return (
     <div className="flex flex-col  mt-[15px]">
       <div className="flex">
@@ -51,7 +53,7 @@ const InputBlock: React.FC<ChildProps> = ({
         <div className="border border-[#ccc] rounded-[5px] flex mt-2">
           <div className="px-[12px] py-[6px] bg-[#eee] rounded-tl-[5px]  rounded-bl-[5px]  border border-r-[#ccc]">
             <span className="text-[14px] text-[#555]">
-              https://demo.dataverse.org/dataverse/
+              {url + "/dataverse"}
             </span>
           </div>
           <input

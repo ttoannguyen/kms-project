@@ -57,8 +57,8 @@ const FieldsMetadata: React.FC<ChildProp> = ({
   }
 
   return (
-    <div className=" ml-[60px] mt-2">
-      <div className="border border-[#ccc] rounded-[5px] w-[70%] max-h-[400px] overflow-y-scroll">
+    <div className=" ml-[60px] mt-2 text-[14px]">
+      <div className="border border-[#ccc] rounded-[5px] w-[80%] max-h-[400px] overflow-y-scroll">
         <div className=" py-2">
           {fieldArray?.map((field, index) => (
             <div>
@@ -80,21 +80,38 @@ const FieldsMetadata: React.FC<ChildProp> = ({
                 {field.isRequired ? (
                   <span> Required by Dataverse</span>
                 ) : (
-                  <div>
-                    <label htmlFor="">
-                      <input type="radio" name="" id="" />
+                  <div className="flex justify-between">
+                    <label htmlFor="" className="mr-4">
+                      <input
+                        type="radio"
+                        name={`field_${field.name}`}
+                        id=""
+                        className="mr-2"
+                      />
                       Required
                     </label>
 
                     {Array.isArray(conditionalLabel) &&
                     conditionalLabel.includes(field.name || "") ? (
                       <label htmlFor="">
-                        <input type="radio" name="" id="" />
+                        <input
+                          type="radio"
+                          name={`field_${field.name}`}
+                          id=""
+                          className="mr-2"
+                          defaultChecked
+                        />
                         Conditionally Required
                       </label>
                     ) : (
                       <label htmlFor="">
-                        <input type="radio" name="" id="" />
+                        <input
+                          type="radio"
+                          name={`field_${field.name}`}
+                          id=""
+                          className="mr-2"
+                          defaultChecked
+                        />
                         Optional
                       </label>
                     )}
@@ -113,20 +130,35 @@ const FieldsMetadata: React.FC<ChildProp> = ({
                         <span> Required by Dataverse</span>
                       ) : (
                         <div>
-                          <label htmlFor="">
-                            <input type="radio" name="" id="" />
+                          <label htmlFor="" className="mr-4">
+                            <input
+                              type="radio"
+                              name={`childField_${childField.name}`}
+                              id=""
+                              className="mr-2"
+                            />
                             Required
                           </label>
 
                           {Array.isArray(conditionalLabel) &&
                           conditionalLabel.includes(childField.name || "") ? (
                             <label htmlFor="">
-                              <input type="radio" name="" id="" />
+                              <input
+                                type="radio"
+                                name={`childField_${childField.name}`}
+                                id=""
+                                className="mr-2"
+                              />
                               Conditionally Required
                             </label>
                           ) : (
                             <label htmlFor="">
-                              <input type="radio" name="" id="" />
+                              <input
+                                type="radio"
+                                name={`childField_${childField.name}`}
+                                id=""
+                                className="mr-2"
+                              />
                               Optional
                             </label>
                           )}
