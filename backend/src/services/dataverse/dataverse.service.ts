@@ -1,8 +1,9 @@
 import axios from "axios";
 import redis from "../../config/redis";
 import { DataverseSearchResponse } from "../../types/dataverse";
+import config from "../../config/config";
 
-const BASE = process.env.DATAVERSE_BASE_URL; // || "https://demo.dataverse.org/api"
+const BASE = config.dataverse.api; // || "https://demo.dataverse.org/api"
 
 export const fetchData = async (
   page: number,

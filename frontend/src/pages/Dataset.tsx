@@ -20,7 +20,7 @@ import {
   getSubjects,
   getTitle,
 } from "@/helpers/metadataDataset/getMetadata";
-import BreadcrumbBlock from "@/components/BreadcrumbBlock ";
+// import BreadcrumbBlock from "@/components/BreadcrumbBlock ";
 import formatBytes from "@/helpers/format/formatSizeData";
 
 // import "../../assets/icon/fontawesome/css/all.min.css";
@@ -156,9 +156,9 @@ const Dataset = () => {
         </p>
       </div>
 
-      {dataset?.data.isPartOf && (
+      {/* {dataset?.data.isPartOf && (
         <BreadcrumbBlock isPartOf={dataset?.data.isPartOf} />
-      )}
+      )} */}
 
       {metadata?.citation.fields && (
         <h1 className="text-[36px] leading-[1.1] font-bold mt-4 mb-0">

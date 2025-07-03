@@ -2,25 +2,35 @@
 import dotenv from "dotenv";
 import path from "path";
 
-// Load env từ gốc dự án
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
+function requireEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+  return value;
+}
 
 export default {
   server: {
-    port: parseInt(process.env.PORT || "3000", 10),
-    API_BASE_URL: process.env.API_BASE_URL,
+    port: parseInt(requireEnv("PORT")),
+    API_BASE_URL: requireEnv("API_BASE_URL"),
   },
   db: {
-    type: "postgres",
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT || "5432", 10),
-    username: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    synchronize: process.env.DB_SYNC,
-    logging: process.env.DB_LOGGING,
+    type: "postgres" as const,
+    host: requireEnv("DB_HOST"),
+    port: parseInt(requireEnv("DB_PORT")),
+    username: requireEnv("DB_USER"),
+    password: requireEnv("DB_PASSWORD"),
+    database: requireEnv("DB_NAME"),
+    synchronize: requireEnv("DB_SYNC") === "true",
+    logging: requireEnv("DB_LOGGING") === "true",
   },
-  redis: process.env.REDIS_URL,
+  dataverse: {
+    api: requireEnv("DATAVERSE_API_BASE"),
+  },
+  redis: requireEnv("REDIS_URL"),
   PUBLIC_ENDPOINTS: [
     "/auth/login",
     "/auth/refresh",

@@ -1,6 +1,8 @@
 import axios from "axios";
 import { DatasetInterface } from "../../types/dataset";
-const BASE = process.env.DATAVERSE_API_BASE || "https://demo.dataverse.org/api";
+import config from "../../config/config";
+
+const BASE = config.dataverse.api;
 
 export const fetchDataset = async (
   persistentId: string
