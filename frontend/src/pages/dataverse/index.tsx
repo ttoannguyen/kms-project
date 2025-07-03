@@ -15,7 +15,7 @@ const DataversePage = () => {
   const order = params.get("order") ?? "desc";
   const page = parseInt(params.get("page") ?? "1");
   const perPage = parseInt(params.get("per_page") ?? "6");
-  const subtree = params.get("subtree") ?? undefined; // Get subtree from query params
+  const subtree = params.get("subtree") ?? undefined;
 
   const [items, setItems] = useState<DataverseItem[]>([]);
   const [total, setTotal] = useState(0);
@@ -43,7 +43,7 @@ const DataversePage = () => {
       page,
       perPage,
       types: selectedTypes.length > 0 ? selectedTypes : undefined,
-      subtree, // Pass subtree (undefined if not provided)
+      subtree,
     })
       .then((dataRes) => {
         console.log("dataRes", dataRes);

@@ -3,7 +3,7 @@ import redis from "../../config/redis";
 import { DataverseSearchResponse } from "../../types/dataverse";
 import config from "../../config/config";
 
-const BASE = config.dataverse.api; // || "https://demo.dataverse.org/api"
+const BASE = config.dataverse.api;
 
 export const fetchData = async (
   page: number,

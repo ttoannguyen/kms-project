@@ -5,7 +5,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import appRouter from "./routes";
 import { errorMiddleware } from "./middleware/errorMiddleware";
-import { authMiddleware } from "./middleware/authMiddleware";
+import { authMiddleware } from "./middleware/authJwt";
 import config from "./config/config";
 
 const app = express();
@@ -22,7 +22,7 @@ app.use(
   })
 );
 
-app.use(authMiddleware);
+// app.use(authMiddleware);
 app.use(config.server.API_BASE_URL, appRouter);
 app.use(errorMiddleware);
 

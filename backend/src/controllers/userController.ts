@@ -12,6 +12,7 @@ const userRepository: Repository<User> = AppDataSource.getRepository(User);
 export const userController = {
   registerUser: async (req: Request, res: Response): Promise<void> => {
     try {
+      console.log("hello");
       const registerDto: RegisterDto = req.body;
       await validate(registerDto);
       const user = await userService.registerUser(registerDto);
@@ -24,6 +25,7 @@ export const userController = {
   getUsers: async (req: Request, res: Response): Promise<void> => {
     try {
       const users = await userService.getUsers();
+      console.log("Hello");
       res.json(users);
     } catch (error: any) {
       throw new AppError(

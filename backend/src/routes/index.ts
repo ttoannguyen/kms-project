@@ -1,3 +1,5 @@
+import { authMiddleware } from "./../middleware/authJwt";
+// routes/index.ts
 import { Router } from "express";
 import userRouter from "./userRoutes";
 import authRoutes from "./authRoutes";
@@ -8,7 +10,7 @@ import datasetRouter from "./dataset/index";
 const router = Router();
 
 router.use("/users", userRouter);
-router.use("/auth", authRoutes);
+// router.use("/auth", authRoutes);
 router.use("/dataverse", dataverseRouter);
 router.use("/dataset", datasetRouter);
 router.use("/file", fileRouter);

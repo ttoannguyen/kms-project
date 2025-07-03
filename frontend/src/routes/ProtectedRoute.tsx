@@ -1,12 +1,23 @@
-import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "@/hooks/useAuth";
+// import Keycloak from "keycloak-js";
 
-const ProtectedRoute = () => {
-  const { isAuthenticated, isLoading } = useAuth();
+interface ProtectedRouteProps {
+  children: React.ReactNode;
+}
 
-  if (isLoading) return <div>Đang kiểm tra đăng nhập...</div>;
-  if (!isAuthenticated) return <Navigate to="/login" replace />;
-  return <Outlet />;
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const [isLogin, , client] = useAuth();
+
+  if (!client) {
+    return null;
+  }
+
+  if (!isLogin) {
+    client.login();
+    return null;
+  }
+
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

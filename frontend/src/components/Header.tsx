@@ -1,12 +1,24 @@
+import useAuth from "@/hooks/useAuth";
 import { assets } from "../assets/assets";
 import Menu from "./Menu";
-import useAuth from "../hooks/useAuth";
 import { Button } from "./ui/button";
-import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
-  const { isAuthenticated, logout } = useAuth();
-  const navigate = useNavigate();
+  const [isLogin, , client] = useAuth();
+  const handleLogin = () => {
+    if (client && !isLogin) {
+      client.login();
+    }
+  };
+
+  const handleLogout = () => {
+    if (client && isLogin) {
+      client.logout({
+        redirectUri: "http://localhost:3001/", // URL sau khi đăng xuất
+      });
+    }
+  };
+
   return (
     <div className="bg-[#292d56]">
       <div className="max-w-6xl mx-auto px-4">
@@ -20,17 +32,17 @@ const Header: React.FC = () => {
       <div className="bg-[#373c6a]">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
           <Menu />
-          {isAuthenticated ? (
+          {isLogin ? (
             <Button
-              onClick={logout}
+              onClick={handleLogout}
               className="bg-red-500 text-white hover:bg-red-600 px-6 py-2"
             >
               Logout
             </Button>
           ) : (
             <Button
-              onClick={() => navigate("/login")}
-              className="bg-red-500 text-white hover:bg-red-600 px-6 py-2"
+              onClick={handleLogin}
+              className="bg-blue-500 text-white hover:bg-blue-600 px-6 py-2"
             >
               Login
             </Button>
