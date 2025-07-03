@@ -78,44 +78,53 @@ const FieldsMetadata: React.FC<ChildProp> = ({
                   <span>{capitalizeFirstLetter(field.name)}</span>
                 </label>
                 {field.isRequired ? (
-                  <span> Required by Dataverse</span>
+                  <span className="font-bold"> Required by Dataverse</span>
                 ) : (
-                  <div className="flex justify-between">
-                    <label htmlFor="" className="mr-4">
-                      <input
-                        type="radio"
-                        name={`field_${field.name}`}
-                        id=""
-                        className="mr-2"
-                      />
-                      Required
-                    </label>
-
-                    {Array.isArray(conditionalLabel) &&
-                    conditionalLabel.includes(field.name || "") ? (
-                      <label htmlFor="">
-                        <input
-                          type="radio"
-                          name={`field_${field.name}`}
-                          id=""
-                          className="mr-2"
-                          defaultChecked
-                        />
-                        Conditionally Required
-                      </label>
+                  <>
+                    {field.childFields ? (
+                      <span></span>
                     ) : (
-                      <label htmlFor="">
-                        <input
-                          type="radio"
-                          name={`field_${field.name}`}
-                          id=""
-                          className="mr-2"
-                          defaultChecked
-                        />
-                        Optional
-                      </label>
+                      <div className="flex justify-between">
+                        <label htmlFor="" className="mr-4">
+                          <input
+                            type="radio"
+                            name={`field_${field.name}`}
+                            id=""
+                            className="mr-2"
+                            disabled={readOnly}
+                          />
+                          Required
+                        </label>
+
+                        {Array.isArray(conditionalLabel) &&
+                        conditionalLabel.includes(field.name || "") ? (
+                          <label htmlFor="">
+                            <input
+                              type="radio"
+                              name={`field_${field.name}`}
+                              id=""
+                              className="mr-2"
+                              defaultChecked
+                              disabled={readOnly}
+                            />
+                            Conditionally Required
+                          </label>
+                        ) : (
+                          <label htmlFor="">
+                            <input
+                              type="radio"
+                              name={`field_${field.name}`}
+                              id=""
+                              className="mr-2"
+                              defaultChecked
+                              disabled={readOnly}
+                            />
+                            Optional
+                          </label>
+                        )}
+                      </div>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
 
@@ -127,7 +136,10 @@ const FieldsMetadata: React.FC<ChildProp> = ({
                       <span className="flex-1">{childField.displayName}</span>
 
                       {childField.isRequired ? (
-                        <span> Required by Dataverse</span>
+                        <span className="font-bold">
+                          {" "}
+                          Required by Dataverse
+                        </span>
                       ) : (
                         <div>
                           <label htmlFor="" className="mr-4">
@@ -148,6 +160,8 @@ const FieldsMetadata: React.FC<ChildProp> = ({
                                 name={`childField_${childField.name}`}
                                 id=""
                                 className="mr-2"
+                                defaultChecked
+                                disabled={readOnly}
                               />
                               Conditionally Required
                             </label>
@@ -158,6 +172,8 @@ const FieldsMetadata: React.FC<ChildProp> = ({
                                 name={`childField_${childField.name}`}
                                 id=""
                                 className="mr-2"
+                                defaultChecked
+                                disabled={readOnly}
                               />
                               Optional
                             </label>
@@ -173,13 +189,13 @@ const FieldsMetadata: React.FC<ChildProp> = ({
       </div>
       <div className="mt-3">
         <button className="px-4 cursor-pointer mr-4 py-2 border border-[#ccc] rounded-[5px] bg-[linear-gradient(to_bottom,_#fff_0%,_#e0e0e0_100%)] transition-all duration-200">
-          Hoàn thành
+          Done
         </button>
         <button
           onClick={() => setDisplayOptionId(null)}
           className="px-4 cursor-pointer py-2 border border-[#ccc] rounded-[5px] bg-[linear-gradient(to_bottom,_#fff_0%,_#e0e0e0_100%)]  transition-all duration-200"
         >
-          Hủy
+          Cancel
         </button>
       </div>
     </div>
