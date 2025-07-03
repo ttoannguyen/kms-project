@@ -15,82 +15,38 @@ export const getCounts = async (_req: Request, res: Response) => {
     const counts = await dataverseService.fetchCounts();
     res.json(counts);
   } catch (error) {
-    res.status(500).json({ error: "Failed to load counts" });
+    res.status(500).json({ error: "Failed to load counts", e: error });
   }
 };
 
 export const getData = async (req: Request, res: Response) => {
-  const page = parseInt(req.query.page as string) || 1;
-  const perPage = parseInt(req.query.per_page as string) || 6;
-  const type = req.query.type as string | undefined;
-  const q = (req.query.q as string) || "*";
-  const sort = req.query.sort as string | undefined;
-  const order = req.query.order as string | undefined;
+  const {
+    q = "*",
+    sort = "date",
+    order = "desc",
+    page = 1,
+    per_page = 6,
+    types = [],
+    subtree,
+  } = req.body;
+  console.log("in controller", req.body);
   console.log(req.url);
   try {
     const data = await dataverseService.fetchData(
       page,
-      perPage,
+      per_page,
       q,
       sort,
       order,
-      type
+      types,
+      subtree
     );
     res.json(data);
   } catch (error: any) {
-    console.error("Dataverse error:", error);
-
     res.status(error.status || 500).json({
-      error: true,
+      error: error,
       message: error.message || "Unknown error",
       ...(error.requestUrl ? { requestUrl: error.requestUrl } : {}),
     });
   }
 };
-
-// export const getDataverses = async (req: Request, res: Response) => {
-//   const page = parseInt(req.query.page as string) || 1;
-//   const perPage = parseInt(req.query.perPage as string) || 20;
-//   const q = (req.query.q as string) || "*";
-//   const sort = req.query.sort as string | undefined;
-//   const order = req.query.order as string | undefined;
-
-//   try {
-//     const data = await dataverseService.fetchDataverse(
-//       page,
-//       perPage,
-//       q,
-//       sort,
-//       order
-//     );
-//     res.json(data);
-//   } catch (error: any) {
-//     console.error("Dataverse error:", error);
-
-//     res.status(error.status || 500).json({
-//       error: true,
-//       message: error.message || "Unknown error",
-//       ...(error.requestUrl ? { requestUrl: error.requestUrl } : {}),
-//     });
-//   }
-// };
-
-// export const getDatasets = async (req: Request, res: Response) => {
-//   try {
-//     const page = parseInt(req.query.page as string) || 1;
-//     const data = await dataverseService.fetchDatasets(page);
-//     res.json(data);
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to load datasets" });
-//   }
-// };
-
-// export const getDatasetById = async (req: Request, res: Response) => {
-//   try {
-//     const id = req.params.id;
-//     const data = await dataverseService.fetchDatasetById(id);
-//     res.json(data);
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to load dataset" });
-//   }
-// };

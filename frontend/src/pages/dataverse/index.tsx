@@ -15,12 +15,11 @@ const DataversePage = () => {
   const order = params.get("order") ?? "desc";
   const page = parseInt(params.get("page") ?? "1");
   const perPage = parseInt(params.get("per_page") ?? "6");
-  const type = params.get("type") ?? undefined;
+  const subtree = params.get("subtree") ?? undefined; // Get subtree from query params
 
   const [items, setItems] = useState<DataverseItem[]>([]);
   const [total, setTotal] = useState(0);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-
   const [numberCountSideBar, setNumberCountSideBar] = useState<CountData>({
     totalDatasets: 0,
     rootDataverse: 0,
@@ -43,16 +42,21 @@ const DataversePage = () => {
       order,
       page,
       perPage,
-      type,
+      types: selectedTypes.length > 0 ? selectedTypes : undefined,
+      subtree, // Pass subtree (undefined if not provided)
     })
       .then((dataRes) => {
+        console.log("dataRes", dataRes);
         setItems(dataRes.items);
         setTotal(dataRes.total);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
       })
       .finally(() => {
         setLoading(false);
       });
-  }, [q, sort, order, page, perPage, type]);
+  }, [q, sort, order, page, perPage, selectedTypes, subtree]); // Added subtree to dependencies
 
   const handleTypeChange = (type: string, checked: boolean) => {
     setSelectedTypes((prev) => {
@@ -65,7 +69,7 @@ const DataversePage = () => {
   };
 
   return (
-    <div className="flex gap-4 border pt-2">
+    <div className="flex gap-4 border p-2">
       <DataverseSideBar
         data={numberCountSideBar}
         selectedTypes={selectedTypes}
@@ -73,10 +77,10 @@ const DataversePage = () => {
       />
 
       <div className="flex-1 w-full">
-       <div className="mb-4 w-full">
+        <div className="mb-4 w-full">
           <Search onSearch={(query) => console.log("Search query:", query)} />
         </div>
-        
+
         <DataverseList items={items} loading={loading} />
 
         {!loading && total > 0 && (

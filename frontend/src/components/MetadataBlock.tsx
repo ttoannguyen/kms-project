@@ -1,3 +1,13 @@
+import {
+  getAuthors,
+  getDepositDate,
+  getDepositor,
+  getDescription,
+  getKeywords,
+  getPublications,
+  getSubjects,
+  getTitle,
+} from "@/helpers/metadataDataset/getMetadata";
 import type {
   DatasetInterface,
   MetadataBlocks,
@@ -29,31 +39,63 @@ const MetadataBlock: React.FC<ChildProps> = ({ metadata, dataset }) => {
         <div className="mb-4 text-[14px] grid grid-cols-[30%_70%] gap-4">
           <div className="font-bold">Title </div>
           <div className="text-justify ">
-            {/* {metadata?.citation.fields[0].value} */}
+            {getTitle(metadata?.citation.fields)}
           </div>
         </div>
 
         <div className="mb-4 text-[14px] grid grid-cols-[30%_70%] gap-4">
           <div className="font-bold">Author </div>
           <div className="text-justify ">
-            {/* {metadata?.citation.fields[1].value[0].authorName.value +
-              " (" +
-              metadata?.citation.fields[1].value[0].authorAffiliation.value +
-              ")"} */}
+            {getAuthors(metadata?.citation.fields)}
           </div>
         </div>
 
         <div className="mb-4 text-[14px] grid grid-cols-[30%_70%] gap-4">
           <div className="font-bold">Description</div>
-          <div className="text-justify ">
-            {/* {metadata?.citation.fields[3].value[0].dsDescriptionValue.value} */}
-          </div>
+          <div
+            className=" "
+            dangerouslySetInnerHTML={{
+              __html: getDescription(metadata?.citation.fields),
+            }}
+          ></div>
         </div>
 
         <div className="mb-4 text-[14px] grid grid-cols-[30%_70%] gap-4">
           <div className="font-bold">Subject</div>
-          {/* <div>{metadata && metadata.citation.fields[4].value.join("; ")}</div> */}
+          {getSubjects(metadata?.citation.fields)}
         </div>
+
+        {getKeywords(metadata?.citation.fields) !== "" && (
+          <div className="mb-4 text-[14px] grid grid-cols-[30%_70%] gap-4">
+            <div className="font-bold">Keyword </div>
+            {getKeywords(metadata?.citation.fields)}
+          </div>
+        )}
+
+        {getPublications(metadata?.citation.fields) !== "" && (
+          <div className="mb-4 text-[14px] grid grid-cols-[30%_70%] gap-4">
+            <div className="font-bold">Related Publication </div>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: getPublications(metadata?.citation.fields),
+              }}
+            ></div>
+          </div>
+        )}
+
+        {getDepositor(metadata?.citation.fields) !== "" && (
+          <div className="mb-4 text-[14px] grid grid-cols-[30%_70%] gap-4">
+            <div className="font-bold">Depositor </div>
+            {getDepositor(metadata?.citation.fields)}
+          </div>
+        )}
+
+        {getDepositDate(metadata?.citation.fields) && (
+          <div className="mb-4 text-[14px] grid grid-cols-[30%_70%] gap-4">
+            <div className="font-bold">Deposit Date </div>
+            {getDepositDate(metadata?.citation.fields)}
+          </div>
+        )}
       </div>
     </div>
   );

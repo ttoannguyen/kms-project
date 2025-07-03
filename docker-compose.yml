@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   backend:
     build:
@@ -11,8 +13,15 @@ services:
       - "4000:4000"
     depends_on:
       - redis
+      - postgres
+      # postgres_custom:
+      #   condition: service_healthy
+      # redis:
+      #   condition: service_started
     networks:
-      - kms-network
+      - kms
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
 
   frontend:
     build:
@@ -25,4 +34,113 @@ services:
     ports:
       - "80:80"
     networks:
-      - kms-network
+      - kms
+
+  redis:
+    image: redis:7
+    container_name: kms_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - kms
+
+      
+  postgres:
+    image: postgres:17
+    container_name: kms_postgres
+    restart: always
+    environment:
+      POSTGRES_DB: kms
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "10000:5432" # Host:Container
+    volumes:
+      - pgdata_custom:/var/lib/postgresql/kms
+    networks:
+      - kms
+    # healthcheck:
+    #   test: ["CMD", "pg_isready", "-U", "postgres"]
+    #   interval: 5s
+    #   timeout: 3s
+    #   retries: 5
+
+volumes:
+  pgdata_custom:
+
+networks:
+  kms:
+    driver: bridge
+
+# version: "3.8"
+
+# services:
+#   backend:
+#     build:
+#       context: ./backend
+#     container_name: kms_backend
+#     env_file:
+#       - ./backend/.env.production
+#     volumes:
+#       - ./backend/.env.production:/app/.env.production
+#     ports:
+#       - "4000:4000"
+#     depends_on:
+#       postgres_custom:
+#         condition: service_healthy
+#       redis:
+#         condition: service_started
+#     networks:
+#       - kms-network
+#     extra_hosts:
+#       - "host.docker.internal:host-gateway"
+
+#   frontend:
+#     build:
+#       context: ./frontend
+#     container_name: kms_frontend
+#     env_file:
+#       - ./frontend/.env.production
+#     volumes:
+#       - ./frontend/.env.production:/app/.env.production
+#     ports:
+#       - "80:80"
+#     networks:
+#       - kms-network
+
+#   redis:
+#     image: redis:7
+#     container_name: kms_redis
+#     ports:
+#       - "6379:6379"
+#     networks:
+#       - kms-network
+      
+#   postgres_custom:
+#     image: postgres:17
+#     container_name: kms_postgres
+#     restart: always
+#     environment:
+#       POSTGRES_DB: kms
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: admin
+#     ports:
+#       - "10000:15432"
+#     volumes:
+#       - pgdata_custom:/var/lib/postgresql/kms
+#     networks:
+#       - kms-network
+#     healthcheck:
+#       test: ["CMD", "pg_isready", "-U", "postgres"]
+#       interval: 5s
+#       timeout: 3s
+#       retries: 5
+
+
+# volumes:
+#   pgdata_custom:
+
+# networks:
+#   kms-network:
+#     driver: bridge
+

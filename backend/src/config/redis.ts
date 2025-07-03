@@ -7,7 +7,6 @@ if (!redisUrl) {
   throw new Error("REDIS_URL is not set in .env");
 }
 
-// const redis = new Redis(redisUrl);
-const redis = new Redis({ host: "127.0.0.1", port: 6379 });
+const redis = new Redis(redisUrl);
 
 export default redis;

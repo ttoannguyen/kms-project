@@ -1,18 +1,26 @@
 # 1. Base image
 FROM node:20-alpine
 
-# 2. Set working dir
+# 2. Set working directory
 WORKDIR /app
 
-# 3. Copy files
+# 3. Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
+# 4. Copy source code
 COPY . .
+
+# 5. Set env (for local dev only, already mounted via volume)
 COPY .env.production .env
-# 4. Build TS
+
+# 6. Build TypeScript
 RUN npm run build
 
-# 5. Expose port and start
+# 7. Copy wait script
+COPY wait-for-postgres.sh .
+RUN chmod +x wait-for-postgres.sh
+
+# 8. Expose port and run
 EXPOSE 4000
-CMD ["node", "dist/index.js"]
+CMD ["./wait-for-postgres.sh"]

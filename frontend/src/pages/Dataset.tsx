@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import datasetApi from "@/services/DatasetApi";
-import axios from "axios";
+
 import type {
   DatasetFile,
   DatasetInterface,
@@ -8,26 +8,30 @@ import type {
 } from "@/types/datasetInterface";
 import defaultFile from "../assets/img/muti_file_icon.png";
 
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import FileBlock from "@/components/FileBlock";
 import MetadataBlock from "@/components/MetadataBlock";
 import TermsBlock from "@/components/TermsBlock";
 import VersionBlock from "@/components/VersionBlock";
+import {
+  getAuthorsTop,
+  getCitation,
+  getDescription,
+  getSubjects,
+  getTitle,
+} from "@/helpers/metadataDataset/getMetadata";
+import BreadcrumbBlock from "@/components/BreadcrumbBlock ";
+import formatBytes from "@/helpers/format/formatSizeData";
 
 // import "../../assets/icon/fontawesome/css/all.min.css";
 // import defaultFile from "../../assets/img/muti_file_icon.png";
 // import "../../global.css";
 
 const Dataset = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const persistentId = searchParams.get("persistentId");
   const location = useLocation();
-  const navigate = useNavigate();
+  const dataverseApi = import.meta.env.VITE_DATAVERSE_URL;
 
   const [dataset, setDataset] = useState<DatasetInterface | null>(null);
   const [metadata, setMetadata] = useState<MetadataBlocks | null>(null);
@@ -44,6 +48,17 @@ const Dataset = () => {
   const [shortDescMode, setShortDescMode] = useState<boolean>(false);
   const descRef = useRef<HTMLDivElement>(null);
   const [navbar, setNavbar] = useState<string>("Files");
+  const [downloadCount, setDownloadCount] = useState<{
+    id: number;
+    downloadCount: number;
+  } | null>(null);
+  const [downloadSize, setDownloadSize] = useState<{
+    status: string;
+    data: {
+      message: string;
+      storageSize: number;
+    };
+  } | null>(null);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -58,11 +73,28 @@ const Dataset = () => {
       );
 
       if (tempDataset) {
-        console.log(tempDataset);
-
         setDataset(tempDataset);
         setMetadata(tempDataset.data.latestVersion.metadataBlocks);
         setFiles(tempDataset.data.latestVersion.files);
+
+        const tempDownloadCount: {
+          id: number;
+          downloadCount: number;
+        } | null = await datasetApi.getDownloadCount(tempDataset.data.id);
+
+        if (tempDownloadCount) {
+          setDownloadCount(tempDownloadCount);
+        }
+
+        const tempDownloadSize = await datasetApi.getDownloadSize(
+          tempDataset.data.id,
+          tempDataset.data.latestVersion.versionNumber,
+          tempDataset.data.latestVersion.versionMinorNumber
+        );
+
+        if (tempDownloadSize) {
+          setDownloadSize(tempDownloadSize);
+        }
       }
 
       setLoading(false);
@@ -99,19 +131,16 @@ const Dataset = () => {
     );
   }
 
-  // if (!dataset) {
-  //   return (
-  //     <div className="p-4">
-  //       <h2 className="text-xl font-semibold text-red-600">
-  //         Dataset not found
-  //       </h2>
-  //       <p>The dataset with ID "{datasetId}" does not exist.</p>
-  //     </div>
-  //   );
-  // }
-
-  // const { metadata, data, type } = dataset;
-  // console.log(dataset);
+  if (!dataset) {
+    return (
+      <div className="p-4">
+        <h2 className="text-xl font-semibold text-red-600">
+          Dataset not found
+        </h2>
+        <p>The dataset with ID "{datasetId}" does not exist.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4">
@@ -120,26 +149,20 @@ const Dataset = () => {
           className="block text-hover-underline-blue  mt-[5px] text-[18px] mb-[10px]"
           to={"/"}
         >
-          {/* {metadata.topic} */}
-          Dataverse - CTU
+          {dataset.data.isPartOf?.displayName}
         </Link>
         <p style={{ color: "#666666" }}>
-          {"(" +
-            // metadata?.citation.fields[1].value[0].authorAffiliation.value +
-            ")"}
+          {"(" + getAuthorsTop(metadata?.citation.fields) + ")"}
         </p>
       </div>
 
-      <div className="">
-        <Link to={"/"} className="text-hover-underline-blue">
-          Dataverse - CTU
-        </Link>{" "}
-        &gt; <span className="text-hover-underline-blue">{"hihi"}</span>
-      </div>
+      {dataset?.data.isPartOf && (
+        <BreadcrumbBlock isPartOf={dataset?.data.isPartOf} />
+      )}
 
-      {metadata && (
+      {metadata?.citation.fields && (
         <h1 className="text-[36px] leading-[1.1] font-bold mt-4 mb-0">
-          {/* {metadata?.citation.fields[0].value} */}
+          {getTitle(metadata?.citation.fields)}
         </h1>
       )}
 
@@ -154,12 +177,10 @@ const Dataset = () => {
             </div>
             <div className="pl-4">
               <div>
-                {/* {metadata?.citation.fields[1].value[0].authorName.value +
-                  ", " +
-                  dataset?.data.latestVersion.releaseTime.split("-")[0] +
-                  ', "' +
-                  metadata?.citation.fields[0].value +
-                  '", '} */}
+                {getCitation(
+                  metadata?.citation.fields,
+                  dataset?.data.latestVersion.releaseTime.split("-")[0]
+                )}
                 <a
                   href={dataset?.data.persistentUrl}
                   className="text-hover-link-blue"
@@ -234,7 +255,11 @@ const Dataset = () => {
                     : "text-justify max-h-[250px] overflow-hidden relative"
                 }
               >
-                {/* {metadata?.citation.fields[3].value[0].dsDescriptionValue.value} */}
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: getDescription(metadata?.citation.fields),
+                  }}
+                ></div>
 
                 {!shortDescMode && (
                   <>
@@ -270,9 +295,7 @@ const Dataset = () => {
 
             <div className=" mt-4 grid grid-cols-[30%_70%] gap-4">
               <div className="font-bold">Subject</div>
-              <div>
-                {/* {metadata && metadata.citation.fields[4].value.join("; ")} */}
-              </div>
+              <div>{metadata && getSubjects(metadata.citation.fields)}</div>
             </div>
 
             {/* <div className="mt-4 grid grid-cols-[30%_70%] gap-4">
@@ -317,12 +340,14 @@ const Dataset = () => {
                   <i className="ml-2 fa-solid fa-download"></i>
                 </p>
 
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                >
-                  Download ZIP (12.2MB)
-                </a>
+                {downloadSize?.data.storageSize && (
+                  <a
+                    href={`${dataverseApi}/access/dataset/:persistentId/?persistentId=${dataset.data.persistentUrl}`}
+                    className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                  >
+                    Download ZIP ({formatBytes(downloadSize?.data.storageSize)})
+                  </a>
+                )}
               </div>
             )}
           </div>
@@ -340,7 +365,7 @@ const Dataset = () => {
             <div> Dataset Metrics </div>
             <div className="p-4 border-l border-r border-b border-gray-300">
               {" "}
-              13 Downloads{" "}
+              {downloadCount?.downloadCount} Downloads{" "}
             </div>
           </div>
         </div>
@@ -387,7 +412,9 @@ const Dataset = () => {
           Versions
         </button>
       </div>
-      {navbar === "Files" && <FileBlock metadata={metadata} files={files} />}
+      {navbar === "Files" && (
+        <FileBlock files={files} persistentUrl={dataset.data.persistentUrl} />
+      )}
       {navbar === "Metadata" && (
         <MetadataBlock metadata={metadata} dataset={dataset} />
       )}

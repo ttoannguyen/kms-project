@@ -18,6 +18,11 @@ dist-ssr
 *.env
 *.env.*
 
+*.npmrc
+*.npmrc.*
+*.npmrc*
+
+
 
 # Editor directories and files
 .vscode/*

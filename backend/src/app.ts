@@ -6,12 +6,12 @@ import appRouter from "./routes";
 import config from "./config/config";
 import { errorMiddleware } from "./middleware/errorMiddleware";
 import { authMiddleware } from "./middleware/authMiddleware";
-
+import dotenv from "dotenv";
+import path from "path";
 const APP_API_BASE_URL = config.server.API_BASE_URL;
 
-// APP
 const app = express();
-
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());

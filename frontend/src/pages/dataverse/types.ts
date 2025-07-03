@@ -1,4 +1,4 @@
-export type DataverseItem = DatasetItem | FileItem;
+export type DataverseItem = DatasetItem | FileItem | DataverseCollection;
 
 export type DatasetItem = {
   persistentId: string;
@@ -9,7 +9,7 @@ export type DatasetItem = {
   description?: string;
   url: string;
   image_url?: string;
-  published_at?: string; // ISO date string
+  published_at?: string;
   publisher?: string;
   citationHtml?: string;
   identifier_of_dataverse?: string;
@@ -24,19 +24,10 @@ export type DatasetItem = {
   versionState?: string;
   majorVersion?: number;
   minorVersion?: number;
-  createdAt?: string; // ISO date string
-  updatedAt?: string; // ISO date string
+  createdAt?: string;
+  updatedAt?: string;
   contacts?: Contact[];
   publications?: Publication[];
-};
-
-export type Contact = {
-  name?: string;
-  affiliation?: string;
-};
-
-export type Publication = {
-  citation?: string;
 };
 
 export type FileItem = {
@@ -44,6 +35,7 @@ export type FileItem = {
   file_id: string;
   name: string;
   file_type?: string;
+  description?: string;
   file_content_type?: string;
   size_in_bytes?: number;
   md5?: string;
@@ -56,10 +48,33 @@ export type FileItem = {
   restricted?: boolean;
   canDownloadFile?: boolean;
   publicationStatuses?: string[];
-  releaseOrCreateDate?: string; // ISO date string
+  releaseOrCreateDate?: string;
   url: string;
   image_url?: string;
-  published_at?: string; // ISO date string
+  published_at?: string;
+};
+
+export type DataverseCollection = {
+  type: "dataverse";
+  identifier: string;
+  name: string;
+  description?: string;
+  url: string;
+  image_url?: string;
+  published_at?: string;
+  publicationStatuses?: string[];
+  affiliation?: string;
+  parentDataverseName?: string;
+  parentDataverseIdentifier?: string;
+};
+
+export type Contact = {
+  name?: string;
+  affiliation?: string;
+};
+
+export type Publication = {
+  citation?: string;
 };
 
 export type Checksum = {

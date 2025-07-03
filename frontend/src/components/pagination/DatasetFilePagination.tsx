@@ -9,7 +9,7 @@ interface ChildProps {
 
 const DatasetFilePagination: React.FC<ChildProps> = ({
   pageCount,
-  currentPage,
+  // currentPage,
   setCurrentPage,
 }) => {
   const handlePageClick = (event: { selected: number }) => {

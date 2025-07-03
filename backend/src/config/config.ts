@@ -15,7 +15,6 @@ export default {
     synchronize: process.env.DB_SYNC !== "production", // DEVELOPMENT ONLY
     logging: process.env.DB_LOGGING === "true",
   },
-  // Danh sách endpoint công khai không cần xác thực
   PUBLIC_ENDPOINTS: [
     "/auth/login",
     "/auth/refresh",
@@ -26,7 +25,12 @@ export default {
     "/dataverse/datasets",
     "/dataverse/count",
     "/dataverse/getdata",
-    "/dataverseItem/getDataset",
+    "/dataset/getDataset",
+    "/dataset/getDatasetDownloadCount",
+    "/dataset/getDownloadSize",
+    "/file/getFile",
+    "/file/getMetadata",
+    "/file/getDownloadCount",
   ],
   redis: process.env.REDIS_URL,
 };

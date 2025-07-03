@@ -47,23 +47,23 @@ const DataversePagination = ({
       <button
         onClick={() => goTo(1)}
         disabled={page === 1}
-        className="px-2 py-1 border rounded disabled:opacity-50"
+        className="px-2 py-1 border rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Đầu tiên
+        First
       </button>
       <button
         onClick={() => goTo(Math.max(1, page - 1))}
         disabled={page === 1}
-        className="px-2 py-1 border rounded disabled:opacity-50"
+        className="px-2 py-1 border rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        ← Trước
+        ← Previous
       </button>
 
       {getVisiblePages().map((p) => (
         <button
           key={p}
           onClick={() => goTo(p)}
-          className={`px-3 py-1 rounded ${
+          className={`px-3 py-1 rounded cursor-pointer ${
             page === p ? "bg-blue-500 text-white" : "bg-gray-200"
           }`}
         >
@@ -74,16 +74,16 @@ const DataversePagination = ({
       <button
         onClick={() => goTo(Math.min(totalPages, page + 1))}
         disabled={page === totalPages}
-        className="px-2 py-1 border rounded disabled:opacity-50"
+        className="px-2 py-1 border rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Sau →
+        Next →
       </button>
       <button
         onClick={() => goTo(totalPages)}
         disabled={page === totalPages}
-        className="px-2 py-1 border rounded disabled:opacity-50"
+        className="px-2 py-1 border rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Cuối cùng
+        Last
       </button>
     </div>
   );

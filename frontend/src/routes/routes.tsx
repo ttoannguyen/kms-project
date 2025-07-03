@@ -11,6 +11,7 @@ import Dataset from "@/pages/Dataset";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminLayout from "@/pages/admin/Layout";
 import ProtectedRoute from "@/routes/ProtectedRoute";
+import File from "@/pages/File";
 // import { getCountData } from "@/services/DataverseApi";
 
 export const routes = createBrowserRouter([
@@ -32,6 +33,7 @@ export const routes = createBrowserRouter([
         // },
       },
       { path: "dataset", element: <Dataset /> },
+      { path: "file", element: <File /> },
     ],
   },
 

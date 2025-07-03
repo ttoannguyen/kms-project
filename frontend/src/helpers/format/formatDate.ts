@@ -10,4 +10,8 @@ function formatDate(dateString: string): string {
   return date.toLocaleDateString("en-GB", options);
 }
 
+export function formatDateOnly(dateString: string): string {
+  return new Date(dateString).toISOString().split("T")[0];
+}
+
 export default formatDate;

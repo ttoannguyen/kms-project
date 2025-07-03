@@ -3,14 +3,14 @@ export interface DataverseItem {
   identifier: string;
   global_id: string;
   description: string;
-  
 }
 
 export interface DataverseSearchResponse {
   status: string;
-  data: {
+  dataveresResponse: {
     total_count: number;
     start: number;
     items: DataverseItem[];
   };
+  // dataveresMetadata: any;
 }
