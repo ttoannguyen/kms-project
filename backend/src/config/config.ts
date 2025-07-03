@@ -1,21 +1,36 @@
+// src/config/config.ts
 import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
+function requireEnv(key: string): string {
+  const value = process.env[key];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${key}`);
+  }
+  return value;
+}
+
 export default {
   server: {
-    port: process.env.PORT || 3000,
-    API_BASE_URL: process.env.API_BASE_URL || "/api/v1",
+    port: parseInt(requireEnv("PORT")),
+    API_BASE_URL: requireEnv("API_BASE_URL"),
   },
   db: {
-    type: "postgres",
-    host: process.env.DB_HOST || "localhost",
-    port: parseInt(process.env.DB_PORT || "5432", 10),
-    username: process.env.DB_USER || "postgres",
-    password: process.env.DB_PASSWORD || "admin",
-    database: process.env.DB_NAME || "postgres",
-    synchronize: process.env.DB_SYNC !== "production", // DEVELOPMENT ONLY
-    logging: process.env.DB_LOGGING === "true",
+    type: "postgres" as const,
+    host: requireEnv("DB_HOST"),
+    port: parseInt(requireEnv("DB_PORT")),
+    username: requireEnv("DB_USER"),
+    password: requireEnv("DB_PASSWORD"),
+    database: requireEnv("DB_NAME"),
+    synchronize: requireEnv("DB_SYNC") === "true",
+    logging: requireEnv("DB_LOGGING") === "true",
   },
-  // Danh sách endpoint công khai không cần xác thực
+  dataverse: {
+    api: requireEnv("DATAVERSE_API_BASE"),
+  },
+  redis: requireEnv("REDIS_URL"),
   PUBLIC_ENDPOINTS: [
     "/auth/login",
     "/auth/refresh",
@@ -35,5 +50,4 @@ export default {
     "/metadataBlock/getAllMetadataBlock",
     "/metadataBlock/getMetadataItem",
   ],
-  redis: process.env.REDIS_URL,
 };

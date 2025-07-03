@@ -168,7 +168,7 @@ const DataverseList = ({
                   <div className="flex items-start">
                     <div className="flex-1">
                       <Link
-                        to={`/dataverse/${item.identifier}`}
+                        to={`/dataverse?q=${item.identifier}`}
                         className="text-lg font-semibold text-blue-700 hover:underline"
                       >
                         {item.name || "Dataverse"}

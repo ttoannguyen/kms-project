@@ -1,8 +1,9 @@
 import axios from "axios";
 import redis from "../../config/redis";
 import { DataverseSearchResponse } from "../../types/dataverse";
+import config from "../../config/config";
 
-const BASE = process.env.DATAVERSE_API_BASE || "https://demo.dataverse.org/api";
+const BASE = config.dataverse.api; // || "https://demo.dataverse.org/api"
 
 export const fetchData = async (
   page: number,
@@ -10,34 +11,43 @@ export const fetchData = async (
   q = "*",
   sort?: string,
   order?: string,
-  type?: string
+  types: string[] = [], // Changed from type to types for array support
+  subtree?: string // Added subtree parameter
 ): Promise<DataverseSearchResponse> => {
   const start = (page - 1) * perPage;
-
   const searchParams = new URLSearchParams();
   searchParams.append("q", q);
   searchParams.append("start", start.toString());
   searchParams.append("per_page", perPage.toString());
-  if (type) searchParams.append("type", type);
+  if (subtree) searchParams.append("subtree", subtree);
   if (sort) searchParams.append("sort", sort);
   if (order) searchParams.append("order", order);
+  if (types.length > 0) {
+    types.forEach((type) => searchParams.append("type", type)); // Support multiple types
+  }
 
   const cacheKey = `dataverse:search:${searchParams.toString()}`;
-  console.log("key - getdata", cacheKey);
+  console.log("key - fetchData", cacheKey);
   const cached = await redis.get(cacheKey);
   if (cached) return JSON.parse(cached);
 
+  console.log("service", `${BASE}/search?${searchParams.toString()}`);
   try {
     const response = await axios.get(
       `${BASE}/search?${searchParams.toString()}`
     );
-    console.log("service", `${BASE}/search?${searchParams.toString()}`);
+
+    const dataResponse = {
+      status: "1000",
+      dataveresResponse: response.data.data,
+      // dataveresMetadata: dataveresMetadata,
+    };
     if (response.status === 200 && response.data?.data?.items?.length > 0) {
-      console.log("store getdata key", cacheKey);
-      await redis.set(cacheKey, JSON.stringify(response.data), "EX", 300);
+      console.log("store fetchData key", cacheKey);
+      await redis.set(cacheKey, JSON.stringify(dataResponse), "EX", 300);
     }
 
-    return response.data;
+    return dataResponse;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
       throw {
@@ -58,13 +68,14 @@ export const fetchCounts = async () => {
   const cacheKey = `counts:summary`;
   const cached = await redis.get(cacheKey);
   if (cached) return JSON.parse(cached);
-
+  // console.log(`${BASE}`);
   const [dataverses, datasets, files, root] = await Promise.all([
     axios.get(`${BASE}/search?q=*&type=dataverse`),
     axios.get(`${BASE}/search?q=*&type=dataset`),
     axios.get(`${BASE}/search?q=*&type=file`),
     axios.get(`${BASE}/dataverses/root?returnChildCount=true`),
   ]);
+  // console.log(dataverses, datasets, files, root);
 
   const result = {
     totalDataverses: dataverses.data.data.total_count,

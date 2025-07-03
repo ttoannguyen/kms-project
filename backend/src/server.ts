@@ -1,3 +1,4 @@
+// src/main.ts
 import app from "./app";
 import config from "./config/config";
 import { AppDataSource } from "./config/db/data-source";
@@ -9,7 +10,7 @@ const startServer = async () => {
 
     app.listen(config.server.port, () => {
       console.log(
-        `Server is running on http://localhost:${config.server.port}${config.server.API_BASE_URL}`
+        `Server is running at http://localhost:${config.server.port}${config.server.API_BASE_URL}`
       );
     });
   } catch (error) {
