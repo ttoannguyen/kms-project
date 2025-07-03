@@ -34,7 +34,7 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     ports:
-      - "8081:8080"
+      - "4000:8080"
     depends_on:
       - db # ← sửa lại đúng tên service
 

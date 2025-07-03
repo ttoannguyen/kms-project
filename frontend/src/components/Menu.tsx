@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Home, Database, Info, AlignJustify, Newspaper } from "lucide-react";
+import { Home, Database, FolderPlus } from "lucide-react";
 
 interface MenuItem {
   icon: React.ReactNode;
@@ -14,29 +14,15 @@ const menuItems: MenuItem[] = [
     label: "Home",
     path: "/",
   },
-  {
-    icon: <Info size={16} />,
-    label: "About",
-    path: "/about",
-  },
+
   {
     icon: <Database size={16} />,
     label: "Dataverse",
     path: "/dataverse",
   },
-  {
-    icon: <AlignJustify size={16} />,
-    label: "Topics",
-    path: "/topics",
-  },
-  {
-    icon: <Newspaper size={16} />,
-    label: "Blog",
-    path: "/blog",
-  },
 
   {
-    icon: <Database size={16} />,
+    icon: <FolderPlus size={16} />,
     label: "Add Dataverse",
     path: "/dataverse/create?ownerId=1",
   },
