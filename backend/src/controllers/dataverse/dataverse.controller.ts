@@ -43,8 +43,6 @@ export const getData = async (req: Request, res: Response) => {
     );
     res.json(data);
   } catch (error: any) {
-    // console.error("Dataverse error:", error);
-
     res.status(error.status || 500).json({
       error: error,
       message: error.message || "Unknown error",

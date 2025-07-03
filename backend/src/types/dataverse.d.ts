@@ -12,5 +12,5 @@ export interface DataverseSearchResponse {
     start: number;
     items: DataverseItem[];
   };
-  dataveresMetadata: any;
+  // dataveresMetadata: any;
 }
