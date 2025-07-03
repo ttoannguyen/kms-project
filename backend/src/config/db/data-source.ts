@@ -1,5 +1,5 @@
+// src/config/db/data-source.ts
 import { DataSource } from "typeorm";
-// import { User } from "../../models/User";
 import config from "../config";
 
 export const AppDataSource = new DataSource({
@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
   username: config.db.username,
   password: config.db.password,
   database: config.db.database,
-  synchronize: config.db.synchronize, // DEVELOPMENT ONLY
-  logging: ["error", "warn"], // Chỉ log lỗi và cảnh báo,
+  synchronize: config.db.synchronize,
+  logging: config.db.logging ? ["error", "warn"] : false,
   entities: [__dirname + "/../../models/*.ts"],
 });

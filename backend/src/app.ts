@@ -1,20 +1,19 @@
+// src/app.ts
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import appRouter from "./routes";
-import config from "./config/config";
 import { errorMiddleware } from "./middleware/errorMiddleware";
 import { authMiddleware } from "./middleware/authMiddleware";
-import dotenv from "dotenv";
-import path from "path";
-const APP_API_BASE_URL = config.server.API_BASE_URL;
+import config from "./config/config";
 
 const app = express();
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
+
 app.use(
   cors({
     origin: "http://localhost:3001",
@@ -24,8 +23,7 @@ app.use(
 );
 
 app.use(authMiddleware);
-
-app.use(APP_API_BASE_URL, appRouter);
+app.use(config.server.API_BASE_URL, appRouter);
 app.use(errorMiddleware);
 
 export default app;

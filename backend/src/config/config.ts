@@ -1,8 +1,13 @@
+// src/config/config.ts
 import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+
+// Load env từ gốc dự án
+dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
 export default {
   server: {
-    port: process.env.PORT || 3000,
+    port: parseInt(process.env.PORT || "3000", 10),
     API_BASE_URL: process.env.API_BASE_URL || "/api/v1",
   },
   db: {
@@ -12,9 +17,10 @@ export default {
     username: process.env.DB_USER || "postgres",
     password: process.env.DB_PASSWORD || "admin",
     database: process.env.DB_NAME || "postgres",
-    synchronize: process.env.DB_SYNC !== "production", // DEVELOPMENT ONLY
+    synchronize: process.env.DB_SYNC === "true", // use true/false in .env
     logging: process.env.DB_LOGGING === "true",
   },
+  redis: process.env.REDIS_URL,
   PUBLIC_ENDPOINTS: [
     "/auth/login",
     "/auth/refresh",
@@ -32,5 +38,4 @@ export default {
     "/file/getMetadata",
     "/file/getDownloadCount",
   ],
-  redis: process.env.REDIS_URL,
 };
