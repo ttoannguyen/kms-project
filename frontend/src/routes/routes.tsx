@@ -6,50 +6,42 @@ import About from "@/pages/About";
 import Topic from "@/pages/Topic";
 import Blog from "@/pages/Blog";
 import Dataverse from "@/pages/dataverse/index";
-import Dataset from "@/pages/Dataset";
-
+import Dataset from "@/pages/dataset/Dataset";
+import File from "@/pages/File";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminLayout from "@/pages/admin/Layout";
-import ProtectedRoute from "@/routes/ProtectedRoute";
-import File from "@/pages/File";
+import ProtectedRoute from "./ProtectedRoute";
 import CreateDataverse from "@/pages/dataverse/CreateDataverse";
-// import { getCountData } from "@/services/DataverseApi";
 
+// Define routes: public routes don't require login, protected routes use ProtectedRoute
 export const routes = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
-      { index: true, element: <Home /> },
-      { path: "login", element: <Login /> },
-      { path: "about", element: <About /> },
-      { path: "topics", element: <Topic /> },
-      { path: "blog", element: <Blog /> },
-      {
-        path: "dataverse",
-        element: <Dataverse />,
-        // loader: async () => {
-        //   const countData = await getCountData();
-        //   return { countData };
-        // },
-      },
+      { index: true, element: <Home /> }, // Public
+      { path: "login", element: <Login /> }, // Public
+      { path: "about", element: <About /> }, // Public
+      { path: "topics", element: <Topic /> }, // Public
+      { path: "blog", element: <Blog /> }, // Public
+      { path: "dataverse", element: <Dataverse /> }, // Public
+      { path: "dataset", element: <Dataset /> }, // Public
+      { path: "file", element: <File /> }, // Public
       {
         path: "dataverse/create",
         element: <CreateDataverse />,
       },
-      { path: "dataset", element: <Dataset /> },
-      { path: "file", element: <File /> },
     ],
   },
-
   {
     path: "/admin",
-    element: <ProtectedRoute />, //
+    element: (
+      <ProtectedRoute>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
-      {
-        element: <AdminLayout />,
-        children: [{ index: true, element: <AdminDashboard /> }],
-      },
+      { index: true, element: <AdminDashboard /> }, // Protected
     ],
   },
 ]);

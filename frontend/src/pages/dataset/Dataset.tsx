@@ -6,7 +6,7 @@ import type {
   DatasetInterface,
   MetadataBlocks,
 } from "@/types/datasetInterface";
-import defaultFile from "../assets/img/muti_file_icon.png";
+import defaultFile from "../../assets/img/muti_file_icon.png";
 
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import FileBlock from "@/components/FileBlock";

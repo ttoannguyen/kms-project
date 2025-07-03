@@ -30,8 +30,18 @@ export default {
   dataverse: {
     api: requireEnv("DATAVERSE_API_BASE"),
   },
+  token: {
+    jwt_token: requireEnv("JWT_TOKEN"),
+  },
+  keycloak: {
+    keycloak_base_url: requireEnv("KEYCLOAK_BASE_URL"),
+    keycloak_client_id: requireEnv("KEYCLOAK_CLIENT_ID"),
+    keycloak_realm: requireEnv("KEYCLOAK_REALM"),
+    keycloak_audience: requireEnv("KEYCLOAK_AUDIENCE"),
+    keycloak_public_key: requireEnv("KEYCLOAK_PUCLIC_KEY"),
+  },
   redis: requireEnv("REDIS_URL"),
-  PUBLIC_ENDPOINTS: [
+  UNPROTECTED_ENDPOINTS: [
     "/auth/login",
     "/auth/refresh",
     "/auth/logout",

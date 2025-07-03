@@ -1,9 +1,9 @@
+// routes/dataserves/index.ts
 import { getCounts } from "../../controllers/dataverse/dataverse.controller";
 import { Router } from "express";
 import { getData } from "../../controllers/dataverse/dataverse.controller";
 const router = Router();
 
-router.use("/count", getCounts);
-
-router.use("/getdata", getData);
+router.get("/count", getCounts);
+router.post("/getdata", getData);
 export default router;

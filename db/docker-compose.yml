@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   postgres:
-    image: postgres
+    image: postgres:16
     container_name: postgres_starfarm
     restart: always
     environment:
@@ -21,5 +21,23 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "8080:80"
+    depends_on:
+      - postgres
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.0
+    container_name: keycloak_starfarm
+    restart: always
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: postgres
+      KC_DB_URL_DATABASE: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8081:8080"
     depends_on:
       - postgres

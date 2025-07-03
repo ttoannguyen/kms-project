@@ -1,135 +1,46 @@
-// hooks/useAuth.ts
-import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-import axios from "axios";
-
-interface JwtPayload {
-  userId: string;
-  exp: number;
-}
-
-interface AuthState {
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  userId: string | null;
-  error: string | null;
-}
+import Keycloak from "keycloak-js";
+import { useEffect, useState, useRef } from "react";
 
 const useAuth = () => {
-  const [authState, setAuthState] = useState<AuthState>({
-    isAuthenticated: false,
-    isLoading: true,
-    userId: null,
-    error: null,
-  });
-
-  const checkTokenValidity = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-
-    if (!accessToken) {
-      setAuthState({
-        isAuthenticated: false,
-        isLoading: false,
-        userId: null,
-        error: null,
-      });
-      return;
-    }
-
-    try {
-      const decoded: JwtPayload = jwtDecode(accessToken);
-      const currentTime = Date.now() / 1000;
-
-      if (decoded.exp < currentTime) {
-        // Token hết hạn → thử refresh
-        const res = await axios.post(
-          "http://localhost:3000/auth/refresh",
-          {},
-          { withCredentials: true }
-        );
-        const newAccessToken = res.data.accessToken;
-        localStorage.setItem("accessToken", newAccessToken);
-        const newDecoded: JwtPayload = jwtDecode(newAccessToken);
-
-        setAuthState({
-          isAuthenticated: true,
-          isLoading: false,
-          userId: newDecoded.userId,
-          error: null,
-        });
-      } else {
-        setAuthState({
-          isAuthenticated: true,
-          isLoading: false,
-          userId: decoded.userId,
-          error: null,
-        });
-      }
-    } catch (err) {
-      localStorage.removeItem("accessToken");
-      setAuthState({
-        isAuthenticated: false,
-        isLoading: false,
-        userId: null,
-        error: null,
-      });
-    }
-  };
-
-  const handleLogin = async (credentials: {
-    username: string;
-    password: string;
-  }) => {
-    try {
-      const res = await axios.post(
-        "http://localhost:3000/api/v1/auth/login",
-        credentials,
-        { withCredentials: true }
-      );
-      const token = res.data.accessToken;
-      localStorage.setItem("accessToken", token);
-      const decoded: JwtPayload = jwtDecode(token);
-
-      setAuthState({
-        isAuthenticated: true,
-        isLoading: false,
-        userId: decoded.userId,
-        error: null,
-      });
-    } catch (err: any) {
-      setAuthState({
-        isAuthenticated: false,
-        isLoading: false,
-        userId: null,
-        error: err.response?.data?.message || "Đăng nhập thất bại",
-      });
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await axios.post(
-        "http://localhost:3000/auth/logout",
-        {},
-        { withCredentials: true }
-      );
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
-    localStorage.removeItem("accessToken");
-    setAuthState({
-      isAuthenticated: false,
-      isLoading: false,
-      userId: null,
-      error: null,
-    });
-  };
+  const isRun = useRef(false);
+  const [token, setToken] = useState<string | undefined>();
+  const [isLogin, setLogin] = useState(false);
+  const [client, setClient] = useState<Keycloak | null>(null);
 
   useEffect(() => {
-    checkTokenValidity();
+    if (isRun.current) return;
+    isRun.current = true;
+
+    const keycloakClient = new Keycloak({
+      url: import.meta.env.VITE_KEYCLOAK_URL,
+      clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID,
+      realm: import.meta.env.VITE_KEYCLOAK_REALM,
+    });
+
+    keycloakClient
+      .init({ onLoad: "check-sso" })
+      .then((authenticated) => {
+        console.log("in useAuth", authenticated);
+        setLogin(authenticated);
+        setToken(keycloakClient.token);
+        setClient(keycloakClient);
+        console.log("ID Token:", keycloakClient.idToken); // Kiểm tra idToken
+      })
+      .catch((error) => {
+        console.error("Keycloak initialization failed:", error);
+        setLogin(false);
+      });
+
+    keycloakClient.onTokenExpired = () => {
+      keycloakClient.updateToken(30).then((refreshed) => {
+        if (refreshed) {
+          setToken(keycloakClient.token);
+        }
+      });
+    };
   }, []);
 
-  return { ...authState, handleLogin, logout };
+  return [isLogin, token, client] as const;
 };
 
 export default useAuth;

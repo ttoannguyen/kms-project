@@ -14,12 +14,29 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
-
   redis:
     image: redis:7.2
     container_name: redis-server
     ports:
       - "6379:6379"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.0
+    container_name: keycloak_starfarm
+    restart: always
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL_HOST: db # ← sửa lại đúng tên service
+      KC_DB_URL_DATABASE: postgres
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db # ← sửa lại đúng tên service
 
 volumes:
   pgdata:
