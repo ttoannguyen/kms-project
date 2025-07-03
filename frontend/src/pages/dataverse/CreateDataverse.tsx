@@ -1,4 +1,5 @@
 import EmailInputBlock from "@/components/EmailInputBlock";
+import FieldsMetadata from "@/components/FieldsMetadata";
 import InputBlock from "@/components/InputBlock";
 import SelectionInputBlock from "@/components/SelectionInputBlock";
 import metadataBlockApi from "@/services/metadataBlockApi";
@@ -107,7 +108,10 @@ const CreateDataverse = () => {
     getAllMetadataBlock();
   }, []);
 
-  console.log(metadataBlock);
+  const [displayOptionId, setDisplayOptionId] = useState<{
+    id: string;
+    readOnly: boolean;
+  } | null>(null);
 
   return (
     <div>
@@ -312,34 +316,61 @@ const CreateDataverse = () => {
             </label>
 
             {citationMetadata && (
-              <div className="flex my-[5px]">
-                <label htmlFor={`metadata_${citationMetadata.id}`}>
-                  <input
-                    type="checkbox"
-                    name=""
-                    id={`metadata_${citationMetadata.id}`}
-                    className="mr-2 cursor-no-drop"
-                    checked
-                    disabled
-                    value={citationMetadata.name}
-                  />
-                  {citationMetadata.displayName + " (Required)"}
-                </label>
-                {checkMetadataDefault ? (
-                  <span className="ml-4 text-hover-underline-blue cursor-pointer">
-                    {"[+] View fields"}
-                  </span>
-                ) : (
-                  <span className="ml-4 text-hover-underline-blue cursor-pointer">
-                    {"[+] View fields + set as hidden, required, or optional"}
-                  </span>
-                )}
+              <div className="flex my-[5px] flex-col">
+                <div className="flex">
+                  <label htmlFor={`metadata_${citationMetadata.id}`}>
+                    <input
+                      type="checkbox"
+                      name=""
+                      id={`metadata_${citationMetadata.id}`}
+                      className="mr-2 cursor-no-drop"
+                      checked
+                      disabled
+                      value={citationMetadata.name}
+                    />
+                    {citationMetadata.displayName + " (Required)"}
+                  </label>
+                  {checkMetadataDefault ? (
+                    <button
+                      onClick={() =>
+                        setDisplayOptionId({
+                          id: citationMetadata.id,
+                          readOnly: true,
+                        })
+                      }
+                      className="ml-4 text-hover-underline-blue cursor-pointer"
+                    >
+                      {"[+] View fields"}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() =>
+                        setDisplayOptionId({
+                          id: citationMetadata.id,
+                          readOnly: false,
+                        })
+                      }
+                      className="ml-4 text-hover-underline-blue cursor-pointer"
+                    >
+                      {"[+] View fields + set as hidden, required, or optional"}
+                    </button>
+                  )}
+                </div>
+
+                {displayOptionId &&
+                  displayOptionId.id === citationMetadata.id && (
+                    <FieldsMetadata
+                      readOnly={displayOptionId.readOnly}
+                      name={citationMetadata.name}
+                      setDisplayOptionId={setDisplayOptionId}
+                    />
+                  )}
               </div>
             )}
 
             {metadataBlock !== null &&
               metadataBlock?.data.map((metadata) => (
-                <div className="flex my-[5px]">
+                <div className="flex my-[5px]" key={metadata.id}>
                   <label htmlFor={`metadata_${metadata.id}`}>
                     <input
                       type="checkbox"
@@ -370,13 +401,32 @@ const CreateDataverse = () => {
                     {metadata.displayName}
                   </label>
                   {!metadata.checked ? (
-                    <span className="ml-4 text-hover-underline-blue cursor-pointer">
+                    <button
+                      onClick={() =>
+                        setDisplayOptionId({
+                          id: metadata.id,
+                          readOnly: false,
+                        })
+                      }
+                      className="ml-4 text-hover-underline-blue cursor-pointer"
+                    >
                       {"[+] View fields"}
-                    </span>
+                    </button>
                   ) : (
-                    <span className="ml-4 text-hover-underline-blue cursor-pointer">
+                    <button
+                      onClick={() =>
+                        setDisplayOptionId({
+                          id: metadata.id,
+                          readOnly: true,
+                        })
+                      }
+                      className="ml-4 text-hover-underline-blue cursor-pointer"
+                    >
                       {"[+] View fields + set as hidden, required, or optional"}
-                    </span>
+                    </button>
+                  )}
+                  {displayOptionId && displayOptionId.id === metadata.id && (
+                    <div className="w-full bg-red-700"></div>
                   )}
                 </div>
               ))}

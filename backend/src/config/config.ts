@@ -33,6 +33,7 @@ export default {
     "/file/getMetadata",
     "/file/getDownloadCount",
     "/metadataBlock/getAllMetadataBlock",
+    "/metadataBlock/getMetadataItem",
   ],
   redis: process.env.REDIS_URL,
 };
