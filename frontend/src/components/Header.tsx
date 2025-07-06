@@ -1,20 +1,24 @@
-import useAuth from "@/hooks/useAuth";
+// src/components/Header.tsx
+import { useAuth } from "@/contexts/AuthProvider";
 import { assets } from "../assets/assets";
 import Menu from "./Menu";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
-  const [isLogin, , client] = useAuth();
+  const { isAuthenticated, client, username, hasRole } = useAuth();
+  const navigate = useNavigate();
+
   const handleLogin = () => {
-    if (client && !isLogin) {
+    if (client && !isAuthenticated) {
       client.login();
     }
   };
 
   const handleLogout = () => {
-    if (client && isLogin) {
+    if (client && isAuthenticated) {
       client.logout({
-        redirectUri: "http://localhost:3001/", // URL sau khi đăng xuất
+        redirectUri: "http://localhost:3001/",
       });
     }
   };
@@ -32,21 +36,34 @@ const Header: React.FC = () => {
       <div className="bg-[#373c6a]">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
           <Menu />
-          {isLogin ? (
-            <Button
-              onClick={handleLogout}
-              className="bg-red-500 text-white hover:bg-red-600 px-6 py-2"
-            >
-              Logout
-            </Button>
-          ) : (
-            <Button
-              onClick={handleLogin}
-              className="bg-blue-500 text-white hover:bg-blue-600 px-6 py-2"
-            >
-              Login
-            </Button>
-          )}
+          <div className="flex items-center gap-4">
+            {isAuthenticated && username && (
+              <span className="text-white">Hi, {username}</span>
+            )}
+            {hasRole("kms_admin") && (
+              <Button
+                onClick={() => navigate("/admin")}
+                className="bg-green-500 cursor-pointer hover:bg-green-600 text-white"
+              >
+                Admin Panel
+              </Button>
+            )}
+            {isAuthenticated ? (
+              <Button
+                onClick={handleLogout}
+                className="bg-red-500 text-white hover:bg-red-600 px-6 py-2"
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button
+                onClick={handleLogin}
+                className="bg-blue-500 text-white hover:bg-blue-600 px-6 py-2"
+              >
+                Login
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

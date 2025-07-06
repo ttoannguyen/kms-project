@@ -1,20 +1,27 @@
-import useAuth from "@/hooks/useAuth";
-// import Keycloak from "keycloak-js";
+// components/ProtectedRoute.tsx
+import { useAuth } from "@/contexts/AuthProvider";
+import { Navigate } from "react-router-dom";
 
-interface ProtectedRouteProps {
+const ProtectedRoute = ({
+  children,
+  requiredRoles = [],
+  redirectTo = "/unauthorized",
+}: {
   children: React.ReactNode;
-}
+  requiredRoles?: string[];
+  redirectTo?: string;
+}) => {
+  const { isAuthenticated, isLoading, hasRole } = useAuth();
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const [isLogin, , client] = useAuth();
+  if (isLoading) return <div>Loading...</div>;
 
-  if (!client) {
-    return null;
-  }
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
-  if (!isLogin) {
-    client.login();
-    return null;
+  if (
+    requiredRoles.length > 0 &&
+    !requiredRoles.some((role) => hasRole(role))
+  ) {
+    return <Navigate to={redirectTo} replace />;
   }
 
   return <>{children}</>;
