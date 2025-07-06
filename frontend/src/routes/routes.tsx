@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from "@/pages/Home";
-import Login from "@/pages/Login";
 import Layout from "@/pages/Layout";
 import About from "@/pages/About";
 import Topic from "@/pages/Topic";
@@ -12,15 +11,14 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminLayout from "@/pages/admin/Layout";
 import ProtectedRoute from "./ProtectedRoute";
 import CreateDataverse from "@/pages/dataverse/CreateDataverse";
+import AdminUsers from "@/pages/admin/AdminUser";
 
-// Define routes: public routes don't require login, protected routes use ProtectedRoute
 export const routes = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
       { index: true, element: <Home /> }, // Public
-      { path: "login", element: <Login /> }, // Public
       { path: "about", element: <About /> }, // Public
       { path: "topics", element: <Topic /> }, // Public
       { path: "blog", element: <Blog /> }, // Public
@@ -36,12 +34,13 @@ export const routes = createBrowserRouter([
   {
     path: "/admin",
     element: (
-      <ProtectedRoute>
+      <ProtectedRoute requiredRoles={["kms_admin"]}>
         <AdminLayout />
       </ProtectedRoute>
     ),
     children: [
       { index: true, element: <AdminDashboard /> }, // Protected
+      { path: "users", element: <AdminUsers /> },
     ],
   },
 ]);
