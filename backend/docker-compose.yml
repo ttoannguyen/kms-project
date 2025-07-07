@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   db:
-    image: postgres:16.2
+    image: ankane/pgvector:latest #Dùng image pgvector chính chủ
     container_name: postgres-db
     environment:
       POSTGRES_USER: postgres
