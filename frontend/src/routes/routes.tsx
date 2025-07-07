@@ -12,6 +12,7 @@ import AdminLayout from "@/pages/admin/Layout";
 import ProtectedRoute from "./ProtectedRoute";
 import CreateDataverse from "@/pages/dataverse/CreateDataverse";
 import AdminUsers from "@/pages/admin/AdminUser";
+import AdminNewsPage from "@/pages/admin/AdminNews";
 
 export const routes = createBrowserRouter([
   {
@@ -41,6 +42,7 @@ export const routes = createBrowserRouter([
     children: [
       { index: true, element: <AdminDashboard /> }, // Protected
       { path: "users", element: <AdminUsers /> },
+      { path: "news", element: <AdminNewsPage /> },
     ],
   },
 ]);

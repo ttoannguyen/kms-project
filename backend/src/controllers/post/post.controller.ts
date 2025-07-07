@@ -51,7 +51,7 @@ export const createPost = async (
   next: NextFunction
 ): Promise<void> => {
   const { title, content } = req.body;
-  const userId = req.user?.id; // Sử dụng req.user từ authMiddleware
+  const userId = req.user?.id;
   console.log(title, content);
 
   if (!userId) {

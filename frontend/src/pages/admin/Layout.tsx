@@ -1,10 +1,12 @@
 // src/pages/admin/Layout.tsx
 import { Outlet, NavLink } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthProvider";
 
 const AdminLayout = () => {
+  const { hasRole } = useAuth();
+
   return (
     <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
       <aside className="w-64 bg-white shadow-md p-4">
         <h2 className="text-xl font-bold mb-4">Admin Panel</h2>
         <nav className="flex flex-col space-y-2">
@@ -17,18 +19,40 @@ const AdminLayout = () => {
           >
             Dashboard
           </NavLink>
+
+          {hasRole("kms_admin") && (
+            <NavLink
+              to="/admin/users"
+              className={({ isActive }) =>
+                isActive ? "text-green-600 font-semibold" : "text-gray-700"
+              }
+            >
+              Users
+            </NavLink>
+          )}
+
+          {hasRole("kms_admin") && (
+            <NavLink
+              to="/admin/news"
+              className={({ isActive }) =>
+                isActive ? "text-green-600 font-semibold" : "text-gray-700"
+              }
+            >
+              News Management
+            </NavLink>
+          )}
           <NavLink
-            to="/admin/users"
+            to="/"
+            end
             className={({ isActive }) =>
               isActive ? "text-green-600 font-semibold" : "text-gray-700"
             }
           >
-            Users
+            Back to home
           </NavLink>
         </nav>
       </aside>
 
-      {/* Main content */}
       <main className="flex-1 p-6">
         <Outlet />
       </main>

@@ -4,18 +4,16 @@ import config from "./config/config";
 import { AppDataSource } from "./config/db/data-source";
 
 const startServer = async () => {
-  try {
-    await AppDataSource.initialize();
-    console.log("Database connected.");
-
-    app.listen(config.server.port, () => {
-      console.log(
-        `Server is running at http://localhost:${config.server.port}${config.server.API_BASE_URL}`
-      );
+  AppDataSource.initialize()
+    .then(() => {
+      console.log("Connected to Postgres");
+      app.listen(config.server.port, () => {
+        console.log(`Server running on http://localhost:${config.server.port}`);
+      });
+    })
+    .catch((err) => {
+      console.error("Error during Data Source initialization:", err);
     });
-  } catch (error) {
-    console.error("Error starting server:", error);
-  }
 };
 
 startServer();

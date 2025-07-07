@@ -1,3 +1,4 @@
+// ✅ src/models/Post.ts - Định nghĩa bài viết
 import {
   Column,
   CreateDateColumn,
@@ -5,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
+// src/models/Post.ts
 @Entity("posts")
 export class Post {
   @PrimaryGeneratedColumn("uuid")
@@ -13,11 +15,11 @@ export class Post {
   @Column()
   title!: string;
 
-  @Column()
+  @Column("text")
   content!: string;
 
   @Column()
-  userId!: string; // Lưu `sub` từ Keycloak để xác định người đăng
+  userId!: string; // Lưu sub từ Keycloak, không liên kết
 
   @CreateDateColumn()
   createdAt!: Date;
