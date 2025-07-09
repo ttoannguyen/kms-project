@@ -7,15 +7,16 @@ dotenv.config();
 
 const memoryStore = new session.MemoryStore();
 
+// 👇 Fix 'clientId' to 'resource'
 const keycloak = new Keycloak(
   {
     store: memoryStore,
   },
   {
-    clientId: config.keycloak.keycloak_client_id!,
-    bearerOnly: true,
-    serverUrl: config.keycloak.keycloak_base_url!,
     realm: config.keycloak.keycloak_realm!,
+    "auth-server-url": config.keycloak.keycloak_base_url!,
+    resource: config.keycloak.keycloak_client_id!, // ✅ correct name
+    "bearer-only": true,
     credentials: {
       secret: process.env.KEYCLOAK_SECRET!,
     },

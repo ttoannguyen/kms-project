@@ -1,4 +1,4 @@
-// ✅ src/models/Post.ts - Định nghĩa bài viết
+// src/models/Post.ts 
 import {
   Column,
   CreateDateColumn,
@@ -6,7 +6,6 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
-// src/models/Post.ts
 @Entity("posts")
 export class Post {
   @PrimaryGeneratedColumn("uuid")

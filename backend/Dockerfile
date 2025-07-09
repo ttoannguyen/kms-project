@@ -17,8 +17,6 @@ FROM node:20-alpine
 WORKDIR /app
 
 COPY --from=builder /app ./
-# COPY wait-for-postgres.sh .
-# RUN chmod +x wait-for-postgres.sh
 
 EXPOSE 4000
 CMD ["./wait-for-postgres.sh"]

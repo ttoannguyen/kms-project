@@ -1,15 +1,6 @@
 import { Request, Response } from "express";
 import * as dataverseService from "../../services/dataverse/dataverse.service";
 
-// export const getInitData = async (_req: Request, res: Response) => {
-//   try {
-//     const data = await dataverseService.fetchInitData();
-//     res.json(data);
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to load init data" });
-//   }
-// };
-
 export const getCounts = async (_req: Request, res: Response) => {
   try {
     const counts = await dataverseService.fetchCounts();
