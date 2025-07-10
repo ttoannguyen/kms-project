@@ -1,218 +1,56 @@
-version: "3.8"
-
 services:
+  db:
+    image: postgres:16.2
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.2
+    container_name: redis-server
+    restart: unless-stopped
+
   backend:
     build:
       context: ./backend
-    container_name: kms_backend
+    container_name: backend-server
     env_file:
-      - ./backend/.env.production
-    volumes:
-      - ./backend/.env.production:/app/.env.production
-    ports:
-      - "4000:4000"
+      - ./backend/.env
+    expose:
+      - "3000" # expose nội bộ, không public
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    networks:
-      - kms
+      - db
+      - redis
+    restart: unless-stopped
 
   frontend:
     build:
       context: ./frontend
-    container_name: kms_frontend
+    container_name: frontend-app
     env_file:
-      - ./frontend/.env.production
+      - ./frontend/.env
+    expose:
+      - "5173" # hoặc 80 nếu dùng nginx trong container
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:stable
+    container_name: nginx-proxy
     volumes:
-      - ./frontend/.env.production:/app/.env.production
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - "80:80"
-    networks:
-      - kms
-
-  redis:
-    image: redis:7
-    container_name: kms_redis
-    ports:
-      - "6379:6379"
-    networks:
-      - kms
-
-  postgres:
-    image: postgres:17
-    container_name: kms_postgres
-    restart: always
-    environment:
-      POSTGRES_DB: kms
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
-    ports:
-      - "10000:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - kms
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
 
 volumes:
   pgdata:
-
-networks:
-  kms:
-    driver: bridge
-
-
-
-# version: "3.8"
-
-# services:
-#   backend:
-#     build:
-#       context: ./backend
-#     container_name: kms_backend
-#     env_file:
-#       - ./backend/.env.production
-#     volumes:
-#       - ./backend/.env.production:/app/.env.production
-#     ports:
-#       - "4000:4000"
-#     depends_on:
-#       - redis
-#       - postgres
-#       # postgres_custom:
-#       #   condition: service_healthy
-#       # redis:
-#       #   condition: service_started
-#     networks:
-#       - kms
-#     # extra_hosts:
-#     #   - "host.docker.internal:host-gateway"
-
-#   frontend:
-#     build:
-#       context: ./frontend
-#     container_name: kms_frontend
-#     env_file:
-#       - ./frontend/.env.production
-#     volumes:
-#       - ./frontend/.env.production:/app/.env.production
-#     ports:
-#       - "80:80"
-#     networks:
-#       - kms
-
-#   redis:
-#     image: redis:7
-#     container_name: kms_redis
-#     ports:
-#       - "6379:6379"
-#     networks:
-#       - kms
-
-      
-#   postgres:
-#     image: postgres:17
-#     container_name: kms_postgres
-#     restart: always
-#     environment:
-#       POSTGRES_DB: kms
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: admin
-#     ports:
-#       - "10000:5432" # Host:Container
-#     volumes:
-#       - pgdata_custom:/var/lib/postgresql/kms
-#     networks:
-#       - kms
-#     # healthcheck:
-#     #   test: ["CMD", "pg_isready", "-U", "postgres"]
-#     #   interval: 5s
-#     #   timeout: 3s
-#     #   retries: 5
-
-# volumes:
-#   pgdata_custom:
-
-# networks:
-#   kms:
-#     driver: bridge
-
-# # version: "3.8"
-
-# # services:
-# #   backend:
-# #     build:
-# #       context: ./backend
-# #     container_name: kms_backend
-# #     env_file:
-# #       - ./backend/.env.production
-# #     volumes:
-# #       - ./backend/.env.production:/app/.env.production
-# #     ports:
-# #       - "4000:4000"
-# #     depends_on:
-# #       postgres_custom:
-# #         condition: service_healthy
-# #       redis:
-# #         condition: service_started
-# #     networks:
-# #       - kms-network
-# #     extra_hosts:
-# #       - "host.docker.internal:host-gateway"
-
-# #   frontend:
-# #     build:
-# #       context: ./frontend
-# #     container_name: kms_frontend
-# #     env_file:
-# #       - ./frontend/.env.production
-# #     volumes:
-# #       - ./frontend/.env.production:/app/.env.production
-# #     ports:
-# #       - "80:80"
-# #     networks:
-# #       - kms-network
-
-# #   redis:
-# #     image: redis:7
-# #     container_name: kms_redis
-# #     ports:
-# #       - "6379:6379"
-# #     networks:
-# #       - kms-network
-      
-# #   postgres_custom:
-# #     image: postgres:17
-# #     container_name: kms_postgres
-# #     restart: always
-# #     environment:
-# #       POSTGRES_DB: kms
-# #       POSTGRES_USER: postgres
-# #       POSTGRES_PASSWORD: admin
-# #     ports:
-# #       - "10000:15432"
-# #     volumes:
-# #       - pgdata_custom:/var/lib/postgresql/kms
-# #     networks:
-# #       - kms-network
-# #     healthcheck:
-# #       test: ["CMD", "pg_isready", "-U", "postgres"]
-# #       interval: 5s
-# #       timeout: 3s
-# #       retries: 5
-
-
-# # volumes:
-# #   pgdata_custom:
-
-# # networks:
-# #   kms-network:
-# #     driver: bridge
-
-

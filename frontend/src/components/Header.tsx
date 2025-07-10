@@ -15,11 +15,8 @@ const Header: React.FC = () => {
   // console.log("ghehe")
   const handleLogin = () => {
     console.log({client,isAuthenticated ,isConfig})
-    if (client && !isAuthenticated && isConfig) {
+    if (client && !isAuthenticated) {
       client.login();
-    }
-    else{
-      navigate("/sys/login")
     }
   };
 

@@ -19,7 +19,7 @@ export const fetchData = async (
 
   const runtimeConfig = getRuntimeConfig(); // ✅ Lấy config từ runtime
   const BASE = runtimeConfig.dataverse_api_base;
-
+  console.log(BASE)
   const start = (page - 1) * perPage;
   const searchParams = new URLSearchParams();
   searchParams.append("q", q);
@@ -71,25 +71,24 @@ export const fetchData = async (
 };
 
 export const fetchCounts = async () => {
-  const runtimeConfig = getRuntimeConfig(); // ✅ Lấy config từ runtime
+  const runtimeConfig = getRuntimeConfig();
   const BASE = runtimeConfig.dataverse_api_base;
+  console.log(`in fetch ${BASE}`);
   const cacheKey = `counts:summary`;
   const cached = await redis.get(cacheKey);
   if (cached) return JSON.parse(cached);
-  // console.log(`${BASE}`);
-  const [dataverses, datasets, files, root] = await Promise.all([
+  const [dataverses, datasets, files] = await Promise.all([
     axios.get(`${BASE}/search?q=*&type=dataverse`),
     axios.get(`${BASE}/search?q=*&type=dataset`),
     axios.get(`${BASE}/search?q=*&type=file`),
-    axios.get(`${BASE}/dataverses/root?returnChildCount=true`),
+    // axios.get(`${BASE}/dataverses/root?returnChildCount=true`),
   ]);
-  // console.log(dataverses, datasets, files, root);
-
+  
   const result = {
     totalDataverses: dataverses.data.data.total_count,
     totalDatasets: datasets.data.data.total_count,
     totalFiles: files.data.data.total_count,
-    rootDataverse: root.data.data.childCount,
+    // rootDataverse: root.data.data.childCount,
   };
 
   await redis.set(cacheKey, JSON.stringify(result), "EX", 180);
