@@ -1,5 +1,5 @@
 
-import { Post } from "../../models/Post";
+import { Post } from "../../entities/Post";
 import { AppDataSource } from "../../config/db/data-source";
 import { PostRepository } from "../../repositories/PostRepository";
 

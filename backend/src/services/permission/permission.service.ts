@@ -1,6 +1,6 @@
 // ✅ src/services/permission.service.ts
 import { AppDataSource } from "../../config/db/data-source";
-import { Permission } from "../../models/Permission";
+import { Permission } from "../../entities/Permission";
 
 export const getUserPermissions = async (userId: string): Promise<string[]> => {
   const repo = AppDataSource.getRepository(Permission);

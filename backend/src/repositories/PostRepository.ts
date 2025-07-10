@@ -1,5 +1,5 @@
 import { DataSource, Repository } from "typeorm";
-import { Post } from "../models/Post";
+import { Post } from "../entities/Post";
 import { IRepository } from "./IRepository";
 
 export class PostRepository implements IRepository<Post> {

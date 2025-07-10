@@ -19,6 +19,16 @@ const AdminLayout = () => {
           >
             Dashboard
           </NavLink>
+          {hasRole("kms_admin") && (
+            <NavLink
+              to="/admin/configs"
+              className={({ isActive }) =>
+                isActive ? "text-green-600 font-semibold" : "text-gray-700"
+              }
+            >
+              Configs
+            </NavLink>
+          )}
 
           {hasRole("kms_admin") && (
             <NavLink

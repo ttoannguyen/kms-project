@@ -1,9 +1,11 @@
-import axios from "axios";
+
 import redis from "../../config/redis";
 import { DataverseSearchResponse } from "../../types/dataverse";
 import config from "../../config/config";
+import axios from "axios";
+import { getRuntimeConfig } from "../../config/runtimeConfig";
 
-const BASE = config.dataverse.api;
+
 
 export const fetchData = async (
   page: number,
@@ -14,6 +16,10 @@ export const fetchData = async (
   types: string[] = [], // Changed from type to types for array support
   subtree?: string // Added subtree parameter
 ): Promise<DataverseSearchResponse> => {
+
+  const runtimeConfig = getRuntimeConfig(); // ✅ Lấy config từ runtime
+  const BASE = runtimeConfig.dataverse_api_base;
+
   const start = (page - 1) * perPage;
   const searchParams = new URLSearchParams();
   searchParams.append("q", q);
@@ -65,6 +71,8 @@ export const fetchData = async (
 };
 
 export const fetchCounts = async () => {
+  const runtimeConfig = getRuntimeConfig(); // ✅ Lấy config từ runtime
+  const BASE = runtimeConfig.dataverse_api_base;
   const cacheKey = `counts:summary`;
   const cached = await redis.get(cacheKey);
   if (cached) return JSON.parse(cached);

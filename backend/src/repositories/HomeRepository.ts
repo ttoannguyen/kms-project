@@ -1,6 +1,6 @@
 // src/repositories/HomeConfigRepository.ts
 import { Repository } from "typeorm";
-import { HomeSectionConfig } from "../models/HomeSectionConfig";
+import { HomeSectionConfig } from "../entities/HomeSectionConfig";
 import { DataSource } from "typeorm";
 
 export class HomeConfigRepository {

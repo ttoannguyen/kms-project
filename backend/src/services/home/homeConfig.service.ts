@@ -1,7 +1,7 @@
 // src/services/home/homeConfig.service.ts
 import { HomeConfigRepository } from "../../repositories/HomeRepository";
 import { AppDataSource } from "../../config/db/data-source";
-import { HomeSectionConfig } from "../../models/HomeSectionConfig";
+import { HomeSectionConfig } from "../../entities/HomeSectionConfig";
 
 const repo = new HomeConfigRepository(AppDataSource);
 

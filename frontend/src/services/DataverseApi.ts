@@ -1,5 +1,6 @@
+import api from "@/lib/axios";
 import type { CountData } from "@/types/Dataverse/dataverse";
-import axios from "axios";
+// import axios from "axios";
 
 const baseURL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api/v1";
@@ -33,9 +34,9 @@ export const getDataverses = async ({
 
   console.log(`${baseURL}/dataverse/getdata`, payload);
 
-  const res = await axios.post(`${baseURL}/dataverse/getdata`, payload);
+  const res = await api.post(`${baseURL}/dataverse/getdata`, payload);
 
-  console.log(res.data);
+  // console.log(res.data);
 
   return {
     items: res.data?.dataveresResponse?.items || [],
@@ -44,6 +45,6 @@ export const getDataverses = async ({
 };
 
 export const getCountData = async (): Promise<CountData> => {
-  const res = await axios.get(`${baseURL}/dataverse/count`);
+  const res = await api.get(`${baseURL}/dataverse/count`);
   return res.data;
 };

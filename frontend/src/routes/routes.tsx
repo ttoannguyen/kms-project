@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from "@/pages/Home";
-import Layout from "@/pages/Layout";
 import About from "@/pages/About";
 import Topic from "@/pages/Topic";
 import Blog from "@/pages/Blog";
@@ -13,11 +12,13 @@ import ProtectedRoute from "./ProtectedRoute";
 import CreateDataverse from "@/pages/dataverse/CreateDataverse";
 import AdminUsers from "@/pages/admin/AdminUser";
 import AdminNewsPage from "@/pages/admin/AdminNews";
+import MaintenanceGuard from "@/components/maintainPage/MaintenanceGuard";
+import AdminConfig from "@/pages/admin/AdminConfig";
 
 export const routes = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <MaintenanceGuard />,
     children: [
       { index: true, element: <Home /> }, // Public
       { path: "about", element: <About /> }, // Public
@@ -43,6 +44,11 @@ export const routes = createBrowserRouter([
       { index: true, element: <AdminDashboard /> }, // Protected
       { path: "users", element: <AdminUsers /> },
       { path: "news", element: <AdminNewsPage /> },
+      { path: "configs", element: <AdminConfig /> },
+
     ],
   },
+  {
+    
+  }
 ]);

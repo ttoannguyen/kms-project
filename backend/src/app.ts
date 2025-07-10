@@ -7,6 +7,7 @@ import appRouter from "./routes";
 import { errorMiddleware } from "./middleware/errorMiddleware";
 import { authMiddleware } from "./middleware/authJwt";
 import config from "./config/config";
+import { maintenanceModeMiddleware } from "./middleware/maintenanceMode";
 
 const app = express();
 
@@ -22,7 +23,9 @@ app.use(
   })
 );
 
+
 // app.use(authMiddleware);
+app.use(maintenanceModeMiddleware);
 app.use(config.server.API_BASE_URL, appRouter);
 app.use(errorMiddleware);
 

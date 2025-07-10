@@ -28,7 +28,7 @@ declare global {
 const client = jwksClient({
   jwksUri: `${config.keycloak.keycloak_base_url}/realms/${config.keycloak.keycloak_realm}/protocol/openid-connect/certs`,
   cache: true,
-  cacheMaxEntries: 5,
+  cacheMaxEntries: 300,
   cacheMaxAge: 10 * 60 * 1000,
 });
 
