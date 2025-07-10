@@ -23,7 +23,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     if (client && isAuthenticated) {
       client.logout({
-        redirectUri: "http://localhost:3001/",
+        redirectUri: window.location.origin,
       });
     }
   };

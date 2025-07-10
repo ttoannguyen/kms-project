@@ -1,11 +1,8 @@
-
 import redis from "../../config/redis";
 import { DataverseSearchResponse } from "../../types/dataverse";
 import config from "../../config/config";
 import axios from "axios";
 import { getRuntimeConfig } from "../../config/runtimeConfig";
-
-
 
 export const fetchData = async (
   page: number,
@@ -16,10 +13,6 @@ export const fetchData = async (
   types: string[] = [], // Changed from type to types for array support
   subtree?: string // Added subtree parameter
 ): Promise<DataverseSearchResponse> => {
-
-  const runtimeConfig = getRuntimeConfig(); // ✅ Lấy config từ runtime
-  const BASE = runtimeConfig.dataverse_api_base;
-  console.log(BASE)
   const start = (page - 1) * perPage;
   const searchParams = new URLSearchParams();
   searchParams.append("q", q);
@@ -36,7 +29,13 @@ export const fetchData = async (
   console.log("key - fetchData", cacheKey);
   const cached = await redis.get(cacheKey);
   if (cached) return JSON.parse(cached);
+  const runtimeConfig = await getRuntimeConfig(); // ✅ Lấy config từ runtime
+  const BASE = runtimeConfig.dataverse_api_base;
+  if (!BASE) {
+    throw new Error("Dataverse API base URL is not defined in runtime config");
+  }
 
+  console.log(BASE);
   console.log("service", `${BASE}/search?${searchParams.toString()}`);
   try {
     const response = await axios.get(
@@ -71,8 +70,11 @@ export const fetchData = async (
 };
 
 export const fetchCounts = async () => {
-  const runtimeConfig = getRuntimeConfig();
+  const runtimeConfig = await getRuntimeConfig(); // ✅ Lấy config từ runtime
   const BASE = runtimeConfig.dataverse_api_base;
+  if (!BASE) {
+    throw new Error("Dataverse API base URL is not defined in runtime config");
+  }
   console.log(`in fetch ${BASE}`);
   const cacheKey = `counts:summary`;
   const cached = await redis.get(cacheKey);
@@ -83,7 +85,7 @@ export const fetchCounts = async () => {
     axios.get(`${BASE}/search?q=*&type=file`),
     // axios.get(`${BASE}/dataverses/root?returnChildCount=true`),
   ]);
-  
+
   const result = {
     totalDataverses: dataverses.data.data.total_count,
     totalDatasets: datasets.data.data.total_count,

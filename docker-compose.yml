@@ -25,8 +25,8 @@ services:
     container_name: backend-server
     env_file:
       - ./backend/.env.production
-    expose:
-      - "4000"
+    ports:
+      - "4000:4000"
     depends_on:
       - db
       - redis
