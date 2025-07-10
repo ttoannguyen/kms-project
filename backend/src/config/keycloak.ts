@@ -17,7 +17,7 @@ const keycloak = new Keycloak(
     credentials: {
       secret: runtimeConfig.keycloak_secret,
     },
-  }
+  } as any
 );
 
 export { keycloak, memoryStore };
