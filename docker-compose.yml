@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: postgres:16.2
@@ -10,11 +8,15 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
+    ports:
+      - "10000:5432"  # <-- Export Postgres ra ngoài
     restart: unless-stopped
 
   redis:
     image: redis:7.2
     container_name: redis-server
+    ports:
+      - "6379:6379"  # <-- Export Redis ra ngoài
     restart: unless-stopped
 
   backend:
@@ -24,7 +26,7 @@ services:
     env_file:
       - ./backend/.env.production
     expose:
-      - "3000"
+      - "4000"
     depends_on:
       - db
       - redis
@@ -37,7 +39,7 @@ services:
     env_file:
       - ./frontend/.env.production
     expose:
-      - "80"  # chạy production = serve bằng NGINX
+      - "80"
     depends_on:
       - backend
     restart: unless-stopped
