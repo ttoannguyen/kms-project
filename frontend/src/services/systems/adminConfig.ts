@@ -1,16 +1,16 @@
 // services/getAdminConfig.ts
 import api from "@/lib/axios";
-import { useAuth } from "@/contexts/AuthProvider";
 import type { ConfigItem } from "@/types/Config/config";
 
 export const useAdminConfigApi = () => {
-  const { idToken } = useAuth();
+   
 
   const getAllConfigs = async () => {
     try {
-      const res = await api.get("/admin/get-config", {
+      const token = await localStorage.getItem("sys_token");
+      const res = await api.get("/sys/admin/get-config", {
         headers: {
-          Authorization: `Bearer ${idToken}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       return res.data;
@@ -21,9 +21,10 @@ export const useAdminConfigApi = () => {
   };
 
   const saveConfigs = async (configs: ConfigItem[]) => {
-    const res = await api.post("/admin/save-config", configs, {
+    const token = localStorage.getItem("sys_token");
+    const res = await api.put("/sys/admin/save-config", configs, {
       headers: {
-        Authorization: `Bearer ${idToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     return res.data;

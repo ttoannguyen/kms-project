@@ -14,10 +14,10 @@ export const maintenanceModeMiddleware = (
 
       const allowList = [
         "/api/v1/status/maintenance",
-        "/ap/v1/sys/admin/login",
-        "/api/v1/admin/check-keycloak",
-        "/api/v1/admin/get-config",
-        "/api/v1/admin/save-config"
+        "/api/v1/sys/admin/login",
+        "/api/v1/sys/admin/check-keycloak",
+        "/api/v1/sys/admin/get-config",
+        "/api/v1/sys/admin/save-config"
       ];
 
       const isAllowed = allowList.some((path) =>

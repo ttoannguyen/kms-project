@@ -84,7 +84,7 @@ const DataverseList = ({
                       ) : null}
 
                       {item.description && (
-                        <p className="text-gray-700 text-sm mt-2">
+                        <p className="text-gray-700 text-sm mt-2 line-clamp-3">
                           {item.description}
                         </p>
                       )}

@@ -8,7 +8,7 @@ import postRouter from "./post/index";
 import homeRouter from "./home/index";
 import configRouter from "./config/index";
 import adminRouter from "./admin/adminLocal.route";
-import statusRouter from "./config/status"
+import statusRouter from "./config/status";
 const router = Router();
 
 router.use(statusRouter);
@@ -18,7 +18,12 @@ router.use("/dataset", datasetRouter);
 router.use("/file", fileRouter);
 router.use("/metadataBlock", metadataBlockRouter);
 router.use("/post", postRouter);
-router.use("/home-config", homeRouter)
+router.use("/home-config", homeRouter);
+
+//========== (keycloak - admin) ==========//
 router.use("/admin", configRouter);
-router.use("/sys/admin", adminRouter)
+
+//========== sys/admin ==========//
+router.use("/sys/admin", adminRouter);
+
 export default router;

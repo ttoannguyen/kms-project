@@ -5,11 +5,14 @@ import { Button } from "@/components/ui/button";
 // import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner"; // hoặc bạn có thể dùng react-toastify
+import { useNavigate } from "react-router-dom";
 
 const AdminConfig = () => {
   const [configs, setConfigs] = useState<ConfigItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [logout, setLogout] = useState(false);
+  const navigate = useNavigate()
 
   const { getAllConfigs, saveConfigs } = useAdminConfigApi();
 
@@ -45,18 +48,36 @@ const AdminConfig = () => {
     }
   };
 
+
+  const handleLogout = async () => {
+    setLogout(true);
+    try {
+      await localStorage.removeItem("sys_token");
+
+      navigate("/")
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      toast.error("Failed to save configuration.");
+    } finally {
+      setLogout(false);
+    }
+  };
+
   if (loading) return <div className="p-4">Loading configs...</div>;
 
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">System Configuration</h2>
 
-      <div className="mb-4">
+      <div className="mb-4 flex justify-between">
         <Button onClick={handleSave} disabled={saving}>
           {saving ? "Saving..." : "Save Changes"}
         </Button>
-      </div>
 
+        <Button onClick={handleLogout} disabled={saving}>
+          {logout ? "Logout..." : "Logout"}
+        </Button>
+      </div>
       <div className="overflow-x-auto border rounded-lg">
         <table className="min-w-full text-sm table-auto">
           <thead className="bg-gray-100">

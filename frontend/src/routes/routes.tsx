@@ -13,7 +13,10 @@ import CreateDataverse from "@/pages/dataverse/CreateDataverse";
 import AdminUsers from "@/pages/admin/AdminUser";
 import AdminNewsPage from "@/pages/admin/AdminNews";
 import MaintenanceGuard from "@/components/maintainPage/MaintenanceGuard";
-import AdminConfig from "@/pages/admin/AdminConfig";
+import AdminConfig from "@/pages/admin/sys/AdminConfig";
+import SysLogin from "@/pages/admin/sys/Login";
+import SysLayout from "@/pages/admin/sys/Layout";
+import SysProtectedRoute from "./SysProtectedRoute";
 
 export const routes = createBrowserRouter([
   {
@@ -41,14 +44,26 @@ export const routes = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <AdminDashboard /> }, // Protected
+      { index: true, element: <AdminDashboard /> }, 
       { path: "users", element: <AdminUsers /> },
       { path: "news", element: <AdminNewsPage /> },
-      { path: "configs", element: <AdminConfig /> },
-
+      
     ],
   },
   {
+    path: "sys",
+    element:<SysLayout />,
+    children: [
+      { index: true, element: <SysLogin /> },
+      {
+        path: "admin",
+        element: (
+          <SysProtectedRoute>
+            <AdminConfig />
+          </SysProtectedRoute>
+        ),
+      },
     
-  }
+    ],
+  },
 ]);

@@ -19,7 +19,7 @@ const AdminLayout = () => {
           >
             Dashboard
           </NavLink>
-          {hasRole("kms_admin") && (
+          {/* {hasRole("kms_admin") && (
             <NavLink
               to="/admin/configs"
               className={({ isActive }) =>
@@ -28,7 +28,7 @@ const AdminLayout = () => {
             >
               Configs
             </NavLink>
-          )}
+          )} */}
 
           {hasRole("kms_admin") && (
             <NavLink

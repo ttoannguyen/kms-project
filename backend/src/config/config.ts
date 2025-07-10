@@ -81,5 +81,7 @@ export default {
     "/file/getDownloadCount",
     "/metadataBlock/getAllMetadataBlock",
     "/metadataBlock/getMetadataItem",
+    "/admin/check-keycloak",
+    "/admin/get-config",
   ],
 };
