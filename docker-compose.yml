@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   db:
     image: postgres:16.2
@@ -20,9 +22,9 @@ services:
       context: ./backend
     container_name: backend-server
     env_file:
-      - ./backend/.env
+      - ./backend/.env.production
     expose:
-      - "3000" # expose nội bộ, không public
+      - "3000"
     depends_on:
       - db
       - redis
@@ -33,9 +35,9 @@ services:
       context: ./frontend
     container_name: frontend-app
     env_file:
-      - ./frontend/.env
+      - ./frontend/.env.production
     expose:
-      - "5173" # hoặc 80 nếu dùng nginx trong container
+      - "80"  # chạy production = serve bằng NGINX
     depends_on:
       - backend
     restart: unless-stopped
