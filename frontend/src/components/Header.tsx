@@ -12,7 +12,7 @@ const Header: React.FC = () => {
   const { isConfig } = useKeycloakConfig();
   const navigate = useNavigate();
   const maintenanceMode = useSystemStore((state) => state.maintenance);
-  // console.log("ghehe")
+
   const handleLogin = () => {
     console.log({client,isAuthenticated ,isConfig})
     if (client && !isAuthenticated) {
