@@ -39,7 +39,7 @@ const Menu: React.FC = () => {
           key={item.path}
           variant={location.pathname === item.path ? "default" : "ghost"}
           onClick={() => navigate(item.path)}
-          className={`flex items-center px-6 py-2 rounded-md gap-2 transition-colors duration-300 animate-fade-in ${
+          className={`flex items-center px-6 py-2 gap-2 transition-colors duration-300 animate-fade-in ${
             location.pathname === item.path
               ? "bg-blue-600 text-white hover:bg-blue-700"
               : "text-gray-100 hover:bg-blue-500 hover:text-white"
