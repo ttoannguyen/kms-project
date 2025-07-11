@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import Home from "@/pages/Home";
-import Layout from "@/pages/Layout";
 import About from "@/pages/About";
 import Topic from "@/pages/Topic";
 import Blog from "@/pages/Blog";
@@ -12,11 +11,17 @@ import AdminLayout from "@/pages/admin/Layout";
 import ProtectedRoute from "./ProtectedRoute";
 import CreateDataverse from "@/pages/dataverse/CreateDataverse";
 import AdminUsers from "@/pages/admin/AdminUser";
+import AdminNewsPage from "@/pages/admin/AdminNews";
+import MaintenanceGuard from "@/components/maintainPage/MaintenanceGuard";
+import AdminConfig from "@/pages/admin/sys/AdminConfig";
+import SysLogin from "@/pages/admin/sys/Login";
+import SysLayout from "@/pages/admin/sys/Layout";
+import SysProtectedRoute from "./SysProtectedRoute";
 
 export const routes = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <MaintenanceGuard />,
     children: [
       { index: true, element: <Home /> }, // Public
       { path: "about", element: <About /> }, // Public
@@ -39,8 +44,26 @@ export const routes = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <AdminDashboard /> }, // Protected
+      { index: true, element: <AdminDashboard /> }, 
       { path: "users", element: <AdminUsers /> },
+      { path: "news", element: <AdminNewsPage /> },
+      
+    ],
+  },
+  {
+    path: "sys",
+    element:<SysLayout />,
+    children: [
+      { index: true, element: <SysLogin /> },
+      {
+        path: "admin",
+        element: (
+          <SysProtectedRoute>
+            <AdminConfig />
+          </SysProtectedRoute>
+        ),
+      },
+    
     ],
   },
 ]);

@@ -1,12 +1,15 @@
 import axios from "axios";
 import { DatasetInterface } from "../../types/dataset";
 import config from "../../config/config";
+import { getRuntimeConfig } from "../../config/runtimeConfig";
 
-const BASE = config.dataverse.api;
+// const BASE = config.dataverse.api;
 
 export const fetchDataset = async (
   persistentId: string
 ): Promise<DatasetInterface> => {
+  const runtimeConfig = getRuntimeConfig(); 
+  const BASE = runtimeConfig.dataverse_api_base;
   const searchParams = new URLSearchParams();
 
   searchParams.append("persistentId", persistentId.toString());
@@ -48,6 +51,8 @@ export const fetchDownloadCount = async (
   id: number;
   downloadCount: number;
 }> => {
+  const runtimeConfig = getRuntimeConfig(); 
+  const BASE = runtimeConfig.dataverse_api_base;
   const searchParams = new URLSearchParams();
 
   searchParams.append("id", id.toString());
@@ -81,6 +86,9 @@ export const fetchDownloadSize = async (
     storageSize: number;
   };
 }> => {
+
+  const runtimeConfig = getRuntimeConfig(); 
+  const BASE = runtimeConfig.dataverse_api_base;
   const searchParams = new URLSearchParams();
 
   searchParams.append("id", id.toString());

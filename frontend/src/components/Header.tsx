@@ -4,12 +4,17 @@ import { assets } from "../assets/assets";
 import Menu from "./Menu";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
+import { useSystemStore } from "@/stores/useSystemStore";
+import { useKeycloakConfig } from "@/contexts/KeycloakConfigContext ";
 
 const Header: React.FC = () => {
   const { isAuthenticated, client, username, hasRole } = useAuth();
+  const { isConfig } = useKeycloakConfig();
   const navigate = useNavigate();
+  const maintenanceMode = useSystemStore((state) => state.maintenance);
 
   const handleLogin = () => {
+    console.log({client,isAuthenticated ,isConfig})
     if (client && !isAuthenticated) {
       client.login();
     }
@@ -18,7 +23,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     if (client && isAuthenticated) {
       client.logout({
-        redirectUri: "http://localhost:3001/",
+        redirectUri: window.location.origin,
       });
     }
   };
@@ -56,12 +61,14 @@ const Header: React.FC = () => {
                 Logout
               </Button>
             ) : (
-              <Button
-                onClick={handleLogin}
-                className="bg-blue-500 text-white hover:bg-blue-600 px-6 py-2"
-              >
-                Login
-              </Button>
+              !maintenanceMode  && (
+                <Button
+                  onClick={handleLogin}
+                  className="bg-blue-500 text-white hover:bg-blue-600 px-6 py-2"
+                >
+                  Login
+                </Button>
+              )
             )}
           </div>
         </div>

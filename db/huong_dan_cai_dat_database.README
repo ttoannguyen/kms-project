@@ -1,3 +1,0 @@
-1. Mở docker desktop, chạy file docker-compose.yml
-2. mở localhost:8080 (pgadmin), đăng nhập tài khoản trong file docker-compose.yml (Chỉnh lại host nếu có thể cho hợp lý)
-3. đọc link chatgpt này: https://chatgpt.com/share/6834517f-8024-8005-8de7-e5a3ee075aef

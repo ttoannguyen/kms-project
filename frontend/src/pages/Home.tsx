@@ -58,9 +58,13 @@ const HomePage = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Trang chủ</h1>
+     <div className="min-h-1000px flex flex-col items-center justify-center text-center p-4">
+      <h1 className="text-3xl font-bold mb-4">Maintenance Mode</h1>
+      <p className="text-lg text-gray-600">The home page is under maintenance.</p>
+    </div>
+      {/* <h1 className="text-2xl font-bold mb-6">Trang chủ</h1> */}
 
-      {isLoading ? (
+      {/* {isLoading ? (
         order.map((key) => <SectionSkeleton key={key} />)
       ) : (
         <DndContext
@@ -80,7 +84,7 @@ const HomePage = () => {
             ))}
           </SortableContext>
         </DndContext>
-      )}
+      )} */}
     </div>
   );
 };

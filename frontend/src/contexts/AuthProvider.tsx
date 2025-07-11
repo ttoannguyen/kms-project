@@ -1,4 +1,5 @@
-// src/context/AuthProvider.tsx
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// src/contexts/AuthProvider.tsx
 import {
   createContext,
   useCallback,
@@ -8,6 +9,12 @@ import {
   useState,
 } from "react";
 import Keycloak from "keycloak-js";
+import api from "@/lib/axios";
+
+type TokenPayload = {
+  preferred_username?: string;
+  realm_access?: { roles: string[] };
+};
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -30,44 +37,67 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [idToken, setIdToken] = useState<string | undefined>();
 
   useEffect(() => {
-    const keycloak = new Keycloak({
-      url: import.meta.env.VITE_KEYCLOAK_URL,
-      realm: import.meta.env.VITE_KEYCLOAK_REALM,
-      clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID,
-    });
+    const initKeycloak = async () => {
+      try {
+        const res = await api.get("/admin/get-config");
+        const rawConfig = res.data; 
 
-    keycloak
-      .init({
-        onLoad: "check-sso",
-        pkceMethod: "S256",
-        silentCheckSsoRedirectUri:
-          window.location.origin + "/silent-check-sso.html",
-      })
-      .then((authenticated) => {
+
+        const config: Record<string, string> = rawConfig.reduce(
+          (acc: Record<string, string>, curr: any) => {
+            acc[curr.key] = curr.value;
+            return acc;
+          },
+          {}
+        );
+
+        console.log(config)
+        console.log("keycloak client_id", config["keycloak_client_id"]);
+
+        const hasValidKeycloakConfig =
+          config["keycloak_base_url"] &&
+          config["keycloak_realm"] &&
+          config["keycloak_audience"];
+
+        if (!hasValidKeycloakConfig) {
+          setIsLoading(false);
+          return;
+        }
+
+        const keycloak = new Keycloak({
+          url: config["keycloak_base_url"],
+          realm: config["keycloak_realm"],
+          clientId: config["keycloak_audience"],
+        });
+
+        const authenticated = await keycloak.init({
+          onLoad: "check-sso",
+          pkceMethod: "S256",
+          silentCheckSsoRedirectUri:
+            window.location.origin + "/silent-check-sso.html",
+        });
+
         setClient(keycloak);
         setIsAuthenticated(authenticated);
 
-        const tokenParsed = keycloak.tokenParsed;
-        const realmRoles = tokenParsed?.realm_access?.roles || [];
-        setRoles(realmRoles);
-        setUsername(tokenParsed?.preferred_username);
-        setIdToken(keycloak.idToken);
-      })
-      .catch((err) => {
+        if (authenticated && keycloak.tokenParsed) {
+          const tokenParsed = keycloak.tokenParsed as TokenPayload;
+          setRoles(tokenParsed.realm_access?.roles || []);
+          setUsername(tokenParsed.preferred_username);
+          setIdToken(keycloak.idToken);
+        }
+      } catch (err) {
         console.error("Keycloak init failed", err);
         setIsAuthenticated(false);
-      })
-      .finally(() => {
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    initKeycloak();
   }, []);
 
-  const hasRole = useCallback(
-    (role: string) => {
-      return roles.includes(role);
-    },
-    [roles]
-  );
+  const hasRole = useCallback((role: string) => roles.includes(role), [roles]);
 
   const value: AuthContextType = useMemo(
     () => ({
@@ -87,8 +117,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used inside <AuthProvider>");
-  }
+  if (!context) throw new Error("useAuth must be used inside <AuthProvider>");
   return context;
 };

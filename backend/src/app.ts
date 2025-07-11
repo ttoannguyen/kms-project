@@ -7,6 +7,7 @@ import appRouter from "./routes";
 import { errorMiddleware } from "./middleware/errorMiddleware";
 import { authMiddleware } from "./middleware/authJwt";
 import config from "./config/config";
+import { maintenanceModeMiddleware } from "./middleware/maintenanceMode";
 
 const app = express();
 
@@ -16,13 +17,15 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: ["http://localhost:3001", "http://localhost", "http://172.18.54.49"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
 
+
 // app.use(authMiddleware);
+app.use(maintenanceModeMiddleware);
 app.use(config.server.API_BASE_URL, appRouter);
 app.use(errorMiddleware);
 

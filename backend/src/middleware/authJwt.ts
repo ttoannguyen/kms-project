@@ -1,7 +1,8 @@
+// authJwt.ts
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtHeader, SigningKeyCallback } from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
-import config from "../config/config";
+import { getRuntimeConfig } from "../config/runtimeConfig";
 
 export interface KeycloakJwtPayload {
   sub: string;
@@ -25,14 +26,23 @@ declare global {
   }
 }
 
-const client = jwksClient({
-  jwksUri: `${config.keycloak.keycloak_base_url}/realms/${config.keycloak.keycloak_realm}/protocol/openid-connect/certs`,
-  cache: true,
-  cacheMaxEntries: 5,
-  cacheMaxAge: 10 * 60 * 1000,
-});
+let jwks: ReturnType<typeof jwksClient> | null = null;
+
+function getClient() {
+  if (!jwks) {
+    const config = getRuntimeConfig();
+    jwks = jwksClient({
+      jwksUri: `${config.keycloak_base_url}/realms/${config.keycloak_realm}/protocol/openid-connect/certs`,
+      cache: true,
+      cacheMaxEntries: 300,
+      cacheMaxAge: 10 * 60 * 1000,
+    });
+  }
+  return jwks;
+}
 
 function getKey(header: JwtHeader, callback: SigningKeyCallback) {
+  const client = getClient();
   client.getSigningKey(header.kid!, function (err, key) {
     const signingKey = key?.getPublicKey();
     callback(err, signingKey);
@@ -44,12 +54,10 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ): void => {
-  console.log(req);
-  const authHeader = req.headers["authorization"];
-  console.log(authHeader);
-  const token = authHeader && authHeader.split(" ")[1];
+  const config = getRuntimeConfig(); // Gọi tại đây, khi chắc chắn đã load
 
-  console.log(token);
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
   if (!token) {
     res.status(401).json({ message: "Token is missing" });
@@ -61,8 +69,8 @@ export const authMiddleware = (
     getKey,
     {
       algorithms: ["RS256"],
-      issuer: `${config.keycloak.keycloak_base_url}/realms/${config.keycloak.keycloak_realm}`,
-      audience: config.keycloak.keycloak_audience,
+      issuer: `${config.keycloak_base_url}/realms/${config.keycloak_realm}`,
+      audience: config.keycloak_audience,
     },
     (err, decoded) => {
       if (err) {

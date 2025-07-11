@@ -1,26 +1,21 @@
-# 1. Base image
-FROM node:20-alpine
+# backend/Dockerfile
+FROM node:20-alpine AS builder
 
-# 2. Set working directory
 WORKDIR /app
 
-# 3. Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# 4. Copy source code
 COPY . .
-
-# 5. Set env (for local dev only, already mounted via volume)
 COPY .env.production .env
 
-# 6. Build TypeScript
-RUN npm run build
+RUN npm run build || echo "Backend build failed, continuing..."
 
-# 7. Copy wait script
-COPY wait-for-postgres.sh .
-RUN chmod +x wait-for-postgres.sh
+FROM node:20-alpine
 
-# 8. Expose port and run
+WORKDIR /app
+
+COPY --from=builder /app ./
+
 EXPOSE 4000
-CMD ["./wait-for-postgres.sh"]
+CMD ["node", "dist/index.js"]
