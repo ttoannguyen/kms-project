@@ -8,5 +8,7 @@ if (!redisUrl) {
 }
 
 const redis = new Redis(redisUrl);
+// Linh chinh lai de chay tren may hay chinh lai neu khong chay
+// const redis = new Redis("redis://127.0.0.1:6379");
 
 export default redis;

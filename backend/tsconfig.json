@@ -6,11 +6,12 @@
     "esModuleInterop": true,
     "outDir": "dist",
     "rootDir": "src",
-    "strict": true,
+    // "strict": true,
     "allowSyntheticDefaultImports": true,
     "moduleDetection": "force",
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "strict": false,
+    "noImplicitAny": false,
   },
-  "include": ["src"]
 }

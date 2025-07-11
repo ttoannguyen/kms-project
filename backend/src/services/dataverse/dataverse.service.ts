@@ -1,8 +1,8 @@
-import axios from "axios";
 import redis from "../../config/redis";
 import { DataverseSearchResponse } from "../../types/dataverse";
-
-const BASE = process.env.DATAVERSE_BASE_URL; // || "https://demo.dataverse.org/api"
+import config from "../../config/config";
+import axios from "axios";
+import { getRuntimeConfig } from "../../config/runtimeConfig";
 
 export const fetchData = async (
   page: number,
@@ -29,7 +29,13 @@ export const fetchData = async (
   console.log("key - fetchData", cacheKey);
   const cached = await redis.get(cacheKey);
   if (cached) return JSON.parse(cached);
+  const runtimeConfig = await getRuntimeConfig(); // ✅ Lấy config từ runtime
+  const BASE = runtimeConfig.dataverse_api_base;
+  if (!BASE) {
+    throw new Error("Dataverse API base URL is not defined in runtime config");
+  }
 
+  console.log(BASE);
   console.log("service", `${BASE}/search?${searchParams.toString()}`);
   try {
     const response = await axios.get(
@@ -64,23 +70,27 @@ export const fetchData = async (
 };
 
 export const fetchCounts = async () => {
+  const runtimeConfig = await getRuntimeConfig(); // ✅ Lấy config từ runtime
+  const BASE = runtimeConfig.dataverse_api_base;
+  if (!BASE) {
+    throw new Error("Dataverse API base URL is not defined in runtime config");
+  }
+  console.log(`in fetch ${BASE}`);
   const cacheKey = `counts:summary`;
   const cached = await redis.get(cacheKey);
   if (cached) return JSON.parse(cached);
-  // console.log(`${BASE}`);
-  const [dataverses, datasets, files, root] = await Promise.all([
+  const [dataverses, datasets, files] = await Promise.all([
     axios.get(`${BASE}/search?q=*&type=dataverse`),
     axios.get(`${BASE}/search?q=*&type=dataset`),
     axios.get(`${BASE}/search?q=*&type=file`),
-    axios.get(`${BASE}/dataverses/root?returnChildCount=true`),
+    // axios.get(`${BASE}/dataverses/root?returnChildCount=true`),
   ]);
-  // console.log(dataverses, datasets, files, root);
 
   const result = {
     totalDataverses: dataverses.data.data.total_count,
     totalDatasets: datasets.data.data.total_count,
     totalFiles: files.data.data.total_count,
-    rootDataverse: root.data.data.childCount,
+    // rootDataverse: root.data.data.childCount,
   };
 
   await redis.set(cacheKey, JSON.stringify(result), "EX", 180);

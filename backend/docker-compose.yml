@@ -14,12 +14,14 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
-
   redis:
     image: redis:7.2
     container_name: redis-server
     ports:
       - "6379:6379"
 
+
 volumes:
   pgdata:
+
+  

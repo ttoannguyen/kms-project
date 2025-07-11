@@ -1,8 +1,10 @@
 import type { DataFileResponse, GetMetadata } from "@/types/file";
 import axios from "axios";
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
-const dataverseUrl = import.meta.env.VITE_DATAVERSE_URL || "https://demo.dataverse.org/api";
+const apiUrl =
+  import.meta.env.VITE_API_BASE_URL //|| "http://localhost:3000/api/v1";
+const dataverseUrl =
+  import.meta.env.VITE_DATAVERSE_URL || "https://demo.dataverse.org/api";
 
 const fileApi = {
   getFile: async (
@@ -21,9 +23,7 @@ const fileApi = {
 
   getMetadataFile: async (id: string): Promise<GetMetadata | null> => {
     try {
-      const response = await axios.get(
-        `${apiUrl}/file/getMetadata?id=${id}`
-      );
+      const response = await axios.get(`${apiUrl}/file/getMetadata?id=${id}`);
       return response.data;
     } catch (error) {
       console.error("Init failed", error);
