@@ -17,6 +17,7 @@ import AdminConfig from "@/pages/admin/sys/AdminConfig";
 import SysLogin from "@/pages/admin/sys/Login";
 import SysLayout from "@/pages/admin/sys/Layout";
 import SysProtectedRoute from "./SysProtectedRoute";
+import UploadFile from "@/pages/UploadFile";
 
 export const routes = createBrowserRouter([
   {
@@ -34,6 +35,11 @@ export const routes = createBrowserRouter([
         path: "dataverse/create",
         element: <CreateDataverse />,
       },
+
+      {
+        path: "uploadFile",
+        element: <UploadFile />,
+      },
     ],
   },
   {
@@ -44,15 +50,14 @@ export const routes = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      { index: true, element: <AdminDashboard /> }, 
+      { index: true, element: <AdminDashboard /> },
       { path: "users", element: <AdminUsers /> },
       { path: "news", element: <AdminNewsPage /> },
-      
     ],
   },
   {
     path: "sys",
-    element:<SysLayout />,
+    element: <SysLayout />,
     children: [
       { index: true, element: <SysLogin /> },
       {
@@ -63,7 +68,6 @@ export const routes = createBrowserRouter([
           </SysProtectedRoute>
         ),
       },
-    
     ],
   },
 ]);
