@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Home, Database, FolderPlus, CirclePlus } from "lucide-react";
+import { Home, Database, FolderPlus, CirclePlus, Upload } from "lucide-react";
 import { useState } from "react";
 
 interface MenuItem {
@@ -20,6 +20,12 @@ const menuItems: MenuItem[] = [
     icon: <Database size={16} />,
     label: "Dataverse",
     path: "/dataverse",
+  },
+
+  {
+    icon: <Upload size={16} />,
+    label: "Upload File",
+    path: "/uploadFile",
   },
 ];
 
@@ -46,7 +52,7 @@ const Menu: React.FC = () => {
           <span className="font-medium">{item.label}</span>
         </Button>
       ))}
-      <div className="relative">
+      {/* <div className="relative">
         <Button
           variant={location.pathname === "addData" ? "default" : "ghost"}
           id="dropdownAddDataButton"
@@ -101,7 +107,7 @@ const Menu: React.FC = () => {
             </ul>
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
