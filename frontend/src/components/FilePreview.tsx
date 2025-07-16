@@ -97,9 +97,25 @@ const FilePreview: React.FC<FilePreviewProps> = ({ file, index, onDelete }) => {
   ) {
     // Không thể render trực tiếp Word trong browser an toàn => Hiển thị tên
     return (
-      <div className="flex items-center gap-2 p-2 border rounded">
-        <FileText className="w-6 h-6 text-blue-500" />
-        <span>{file.name}</span>
+      <div className="flex items-center gap-2 p-2 border rounded w-full justify-between">
+        <div className="flex">
+          <FileText className="w-[100px] h-[100px] text-blue-500 border border-[#ccc] mr-2" />
+          <span>{file.name}</span>
+        </div>
+
+        <div className="flex items-center">
+          <Button
+            variant="ghost"
+            className="cursor-pointer "
+            data-tooltip-id={`my-tooltip_${index}`}
+            data-tooltip-content="Delete file"
+            onClick={() => onDelete(file)}
+          >
+            <Trash className="w-12 h-12 text-red-500" /> {/* 48px x 48px */}
+          </Button>
+
+          <Tooltip id={`my-tooltip_${index}`} place="left" />
+        </div>
       </div>
     );
   }
@@ -108,7 +124,7 @@ const FilePreview: React.FC<FilePreviewProps> = ({ file, index, onDelete }) => {
   return (
     <div className="flex items-center gap-2 p-2 border rounded w-full justify-between">
       <div className="flex">
-        <FileIcon className="w-[100px] h-[100px] text-gray-500 mr-2" />
+        <FileIcon className="w-[100px] h-[100px] text-gray-500 mr-2 border border-[#ccc]" />
         <p className="text-[16px] text-center mt-2">{file.name}</p>
       </div>
 
