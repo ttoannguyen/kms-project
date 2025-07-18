@@ -41,6 +41,22 @@ const UploadFile = () => {
   const [date, setDate] = useState<Date | undefined>();
   const [selectedLocation, setSelectedLocation] = useState("");
 
+  const languageOptions = [
+    { code: "vi", name: "Vietnamese (vi)" },
+    { code: "en", name: "English (en)" },
+  ];
+
+  const stakeholderOptions = [
+    { label: "Nhà nghiên cứu", value: "researcher" },
+    { label: "Cán bộ nông nghiệp", value: "agriculture_officer" },
+    { label: "Nông dân", value: "farmer" },
+    { label: "Nhà hoạch định chính sách", value: "policy_maker" },
+    { label: "Sinh viên", value: "student" },
+    { label: "Khác", value: "other" },
+  ];
+
+  const [language, setLanguage] = useState<string>("");
+
   const handleFileDelete = (fileToDelete: File) => {
     const updateFile = files.filter((file) => file !== fileToDelete);
 
@@ -70,8 +86,11 @@ const UploadFile = () => {
         </div>
 
         <div className="w-full flex flex-col items-center mt-4 border border-[#ccc] rounded">
-          <div className="w-[50%] py-4">
-            <label className="w-full flex " htmlFor="input_api_token">
+          <div className="w-[80%] py-4">
+            <label
+              className="w-full justify-between flex "
+              htmlFor="input_api_token"
+            >
               <span className="w-[20%]"> API Token</span>
               <div className="flex flex-col w-[70%]">
                 <Input
@@ -91,7 +110,10 @@ const UploadFile = () => {
               </div>
             </label>
 
-            <label className="w-full flex mt-4" htmlFor="input_file_name">
+            <label
+              className="w-full justify-between flex mt-4"
+              htmlFor="input_file_name"
+            >
               <span className="w-[20%]">File name</span>
               <div className="flex flex-col w-[70%]">
                 <Input
@@ -104,7 +126,7 @@ const UploadFile = () => {
               </div>
             </label>
 
-            <label className="w-full flex mt-4">
+            <label className="w-full justify-between flex mt-4">
               <span className="w-[20%]">Dataset</span>
               <div className="flex flex-col w-[70%]">
                 <Select onValueChange={(value) => setDataset(value)}>
@@ -126,7 +148,7 @@ const UploadFile = () => {
             </label>
 
             <label
-              className="w-full flex mt-4"
+              className="w-full justify-between flex mt-4"
               htmlFor="input_file_description"
             >
               <span className="w-[20%]">Description</span>
@@ -141,8 +163,8 @@ const UploadFile = () => {
             </label>
 
             <label
-              className="w-full flex mt-4"
-              htmlFor="input_file_description"
+              className="w-full justify-between flex mt-4"
+              htmlFor="input_file_restrict"
             >
               <span className="w-[20%]">Restrict</span>
               <div className="flex flex-col w-[70%]">
@@ -169,7 +191,7 @@ const UploadFile = () => {
             </label>
 
             <label
-              className="w-full flex mt-4"
+              className="w-full justify-between flex mt-4"
               htmlFor="input_file_description"
             >
               <span className="w-[20%]">Categories</span>
@@ -189,14 +211,20 @@ const UploadFile = () => {
               </div>
             </label>
 
-            <label className="w-full flex mt-4" htmlFor="input_subject">
+            <label
+              className="w-full justify-between flex mt-4"
+              htmlFor="input_subject"
+            >
               <span className="w-[20%]">Subjects</span>
               <div className="flex flex-col w-[70%]">
                 <SubjectTagInput value={subjects} onChange={setSubjects} />
               </div>
             </label>
 
-            <label className="w-full flex mt-4" htmlFor="input_date">
+            <label
+              className="w-full justify-between flex mt-4"
+              htmlFor="input_date"
+            >
               <span className="w-[20%]">Date Collected</span>
               <div className="flex flex-col w-[70%]">
                 <Popover>
@@ -228,13 +256,111 @@ const UploadFile = () => {
               </div>
             </label>
 
-            <label className="w-full flex mt-4">
+            <label className="w-full justify-between flex mt-4">
               <span className="w-[20%]">Geographic Coverage</span>
               <div className="flex flex-col w-[70%]">
                 <LocationSelector
                   value={selectedLocation}
                   onChange={setSelectedLocation}
                 />
+              </div>
+            </label>
+
+            <label
+              className="w-full justify-between flex mt-4"
+              htmlFor="input_producer"
+            >
+              <span className="w-[20%]">Producer / Contributor</span>
+              <div className="flex flex-col w-[70%]">
+                <Input
+                  type="text"
+                  className=""
+                  id="input_producer"
+                  value={apiToken}
+                  onChange={(e) => setApiToken(e.target.value)}
+                />
+              </div>
+            </label>
+
+            <label
+              className="w-full justify-between flex mt-4"
+              htmlFor="input_author"
+            >
+              <span className="w-[20%]"> Author / Creator</span>
+              <div className="flex flex-col w-[70%]">
+                <Input
+                  type="text"
+                  className=""
+                  id="input_author"
+                  value={apiToken}
+                  onChange={(e) => setApiToken(e.target.value)}
+                />
+              </div>
+            </label>
+
+            <label
+              className="w-full justify-between flex mt-4"
+              htmlFor="input_author"
+            >
+              <span className="w-[20%]">Language</span>
+              <div className="flex flex-col w-[70%]">
+                <Select value={language} onValueChange={setLanguage}>
+                  <SelectTrigger id="language" className="w-full">
+                    <SelectValue placeholder="Select a language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {languageOptions.map((lang) => (
+                      <SelectItem key={lang.code} value={lang.code}>
+                        {lang.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </label>
+
+            <label
+              className="w-full justify-between flex mt-4"
+              htmlFor="input_technicalNotes"
+            >
+              <span className="w-[20%]">Technical Notes / Methodology</span>
+              <div className="flex flex-col w-[70%]">
+                <Textarea
+                  id="input_technicalNotes"
+                  placeholder="Ví dụ: Dữ liệu thu thập bằng drone, xử lý bằng QGIS, lọc nhiễu bằng thuật toán XYZ..."
+                  // value={form.technicalNotes}
+                  // onChange={(e) => setForm({ ...form, technicalNotes: e.target.value })}
+                />
+              </div>
+            </label>
+
+            <label
+              className="w-full justify-between flex mt-4"
+              htmlFor="input_stakeholder"
+            >
+              <span className="w-[20%]">Stakeholder</span>
+              <div className="flex flex-col w-[70%]">
+                {stakeholderOptions.map((opt) => (
+                  <div
+                    key={opt.value}
+                    className="flex items-center space-x-2 pb-2"
+                  >
+                    <Checkbox
+                      id={opt.value}
+                      // checked={form.stakeholders.includes(opt.value)}
+                      // onCheckedChange={(checked) => {
+                      //   setForm((prev) => ({
+                      //     ...prev,
+                      //     stakeholders: checked
+                      //       ? [...prev.stakeholders, opt.value]
+                      //       : prev.stakeholders.filter((v) => v !== opt.value),
+                      //   }));
+                      // }}
+                      className="cursor-pointer"
+                    />
+                    <Label htmlFor={opt.value}>{opt.label}</Label>
+                  </div>
+                ))}
               </div>
             </label>
           </div>
