@@ -1,8 +1,20 @@
+import { CategoryCheckboxGroup } from "@/components/CategoryCheckboxGroup";
 import FileDropZone from "@/components/FileDropZone";
 import FilePreview from "@/components/FilePreview";
+import SubjectTagInput from "@/components/SubjectTagInput";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { format } from "date-fns";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -12,7 +24,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Calendar as CalendarIcon } from "lucide-react";
 import { useState } from "react";
+import LocationSelector from "@/components/LocationSelector";
 
 const UploadFile = () => {
   // const baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -22,6 +37,9 @@ const UploadFile = () => {
 
   const [apiToken, setApiToken] = useState<string>("");
   const [dataset, setDataset] = useState<string>("");
+  const [subjects, setSubjects] = useState<string[]>([]);
+  const [date, setDate] = useState<Date | undefined>();
+  const [selectedLocation, setSelectedLocation] = useState("");
 
   const handleFileDelete = (fileToDelete: File) => {
     const updateFile = files.filter((file) => file !== fileToDelete);
@@ -73,6 +91,19 @@ const UploadFile = () => {
               </div>
             </label>
 
+            <label className="w-full flex mt-4" htmlFor="input_file_name">
+              <span className="w-[20%]">File name</span>
+              <div className="flex flex-col w-[70%]">
+                <Input
+                  type="text"
+                  className=""
+                  id="input_file_name"
+                  value={apiToken}
+                  onChange={(e) => setApiToken(e.target.value)}
+                />
+              </div>
+            </label>
+
             <label className="w-full flex mt-4">
               <span className="w-[20%]">Dataset</span>
               <div className="flex flex-col w-[70%]">
@@ -100,8 +131,7 @@ const UploadFile = () => {
             >
               <span className="w-[20%]">Description</span>
               <div className="flex flex-col w-[70%]">
-                <Input
-                  type="text"
+                <Textarea
                   className=""
                   id="input_file_description"
                   value={apiToken}
@@ -135,6 +165,76 @@ const UploadFile = () => {
                     <Label htmlFor="input_restrict_false">False</Label>
                   </div>
                 </RadioGroup>
+              </div>
+            </label>
+
+            <label
+              className="w-full flex mt-4"
+              htmlFor="input_file_description"
+            >
+              <span className="w-[20%]">Categories</span>
+              <div className="flex flex-col w-[70%]">
+                {/* <div className="flex items-center">
+                  <Checkbox id="input_categories" />
+                  <Label htmlFor="input_categories">Plot level data</Label>
+                </div> */}
+
+                <CategoryCheckboxGroup
+                  defaultSelected={["Plot level data"]}
+                  onChange={(selected) => {
+                    console.log("Selected categories:", selected);
+                    // setCategories(selected) // nếu bạn dùng useState
+                  }}
+                />
+              </div>
+            </label>
+
+            <label className="w-full flex mt-4" htmlFor="input_subject">
+              <span className="w-[20%]">Subjects</span>
+              <div className="flex flex-col w-[70%]">
+                <SubjectTagInput value={subjects} onChange={setSubjects} />
+              </div>
+            </label>
+
+            <label className="w-full flex mt-4" htmlFor="input_date">
+              <span className="w-[20%]">Date Collected</span>
+              <div className="flex flex-col w-[70%]">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {date ? format(date, "yyyy-MM-dd") : "Chọn ngày khảo sát"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-auto p-0"
+                    align="start"
+                    id="input_date"
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={setDate}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+            </label>
+
+            <label className="w-full flex mt-4">
+              <span className="w-[20%]">Geographic Coverage</span>
+              <div className="flex flex-col w-[70%]">
+                <LocationSelector
+                  value={selectedLocation}
+                  onChange={setSelectedLocation}
+                />
               </div>
             </label>
           </div>
