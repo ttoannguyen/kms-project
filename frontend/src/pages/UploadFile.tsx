@@ -25,9 +25,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Calendar as CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { AlertCircleIcon, Calendar as CalendarIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import LocationSelector from "@/components/LocationSelector";
+import datasetApi from "@/services/DatasetApi";
+import axios from "axios";
+import { toast } from "sonner";
 
 const UploadFile = () => {
   // const baseURL = import.meta.env.VITE_API_BASE_URL;
@@ -63,9 +66,44 @@ const UploadFile = () => {
     setFiles(updateFile);
   };
 
+  const getDatasetForUploadFile = async (): Promise<void> => {
+    if (apiToken !== "") {
+      try {
+        const datasetForUploadFile = await datasetApi.getDatasetForUploadFile(
+          apiToken
+        );
+        console.log(datasetForUploadFile);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error(
+            "❌ API error:",
+            error.response?.status,
+            error.response?.data
+          );
+        } else {
+          console.error("❌ Unknown error:", error);
+        }
+      }
+    } else {
+      toast.error("Please enter API TOKEN", {
+        style: {
+          backgroundColor: "#fee2e2",
+          color: "#b91c1c",
+          marginBottom: "50px",
+          fontSize: "16px",
+        },
+      });
+    }
+  };
+
   return (
     <div className="w-full ">
-      <form action="flex flex-col items-center">
+      <form
+        className="flex flex-col items-center"
+        onSubmit={(e) => {
+          e.preventDefault();
+        }}
+      >
         <div className="w-full ">
           <FileDropZone files={files} onFilesSelected={setFiles} />
         </div>
@@ -100,13 +138,23 @@ const UploadFile = () => {
                   value={apiToken}
                   onChange={(e) => setApiToken(e.target.value)}
                 />
-                <a
-                  href={`${baseURL}/dataverseuser.xhtml?selectTab=apiTokenTab`}
-                  target="_blank"
-                  className="text-hover-underline-blue mt-2"
-                >
-                  Get API TOKEN
-                </a>
+                <div className=" mt-2">
+                  <a
+                    href={`${baseURL}/dataverseuser.xhtml?selectTab=apiTokenTab`}
+                    target="_blank"
+                    className="text-hover-underline-blue mr-8"
+                  >
+                    Get API TOKEN
+                  </a>
+                  <Button
+                    variant="outline"
+                    type="button"
+                    className="cursor-pointer"
+                    onClick={getDatasetForUploadFile}
+                  >
+                    Get Datasets
+                  </Button>
+                </div>
               </div>
             </label>
 
