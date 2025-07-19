@@ -76,6 +76,7 @@ export default {
     "/dataset/getDataset",
     "/dataset/getDatasetDownloadCount",
     "/dataset/getDownloadSize",
+    "/dataset/getDatasetForUploadFile",
     "/file/getFile",
     "/file/getMetadata",
     "/file/getDownloadCount",

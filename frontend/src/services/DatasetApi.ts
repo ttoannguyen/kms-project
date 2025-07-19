@@ -1,8 +1,7 @@
 import type { DatasetInterface } from "@/types/datasetInterface";
 import axios from "axios";
 
-const apiUrl =
-  import.meta.env.VITE_API_BASE_URL //|| "http://localhost:3000/api/v1";
+const apiUrl = import.meta.env.VITE_API_BASE_URL; //|| "http://localhost:3000/api/v1";
 
 const datasetApi = {
   getDataset: async (
@@ -55,6 +54,19 @@ const datasetApi = {
     try {
       const response = await axios.get(
         `${apiUrl}/dataset/getDownloadSize?id=${id}&version=${version}`
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Init failed", error);
+
+      return null;
+    }
+  },
+
+  getDatasetForUploadFile: async (apiKey: string): Promise<any> => {
+    try {
+      const response = await axios.get(
+        `${apiUrl}/dataset/getDatasetForUploadFile?apiKey=${apiKey}`
       );
       return response.data;
     } catch (error) {

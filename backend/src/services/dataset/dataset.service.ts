@@ -8,7 +8,7 @@ import { getRuntimeConfig } from "../../config/runtimeConfig";
 export const fetchDataset = async (
   persistentId: string
 ): Promise<DatasetInterface> => {
-  const runtimeConfig = getRuntimeConfig(); 
+  const runtimeConfig = getRuntimeConfig();
   const BASE = runtimeConfig.dataverse_api_base;
   const searchParams = new URLSearchParams();
 
@@ -51,7 +51,7 @@ export const fetchDownloadCount = async (
   id: number;
   downloadCount: number;
 }> => {
-  const runtimeConfig = getRuntimeConfig(); 
+  const runtimeConfig = getRuntimeConfig();
   const BASE = runtimeConfig.dataverse_api_base;
   const searchParams = new URLSearchParams();
 
@@ -86,8 +86,7 @@ export const fetchDownloadSize = async (
     storageSize: number;
   };
 }> => {
-
-  const runtimeConfig = getRuntimeConfig(); 
+  const runtimeConfig = getRuntimeConfig();
   const BASE = runtimeConfig.dataverse_api_base;
   const searchParams = new URLSearchParams();
 
@@ -99,6 +98,40 @@ export const fetchDownloadSize = async (
       `${BASE}/datasets/${id}/versions/${version}/downloadsize`
     );
 
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw {
+        status: error.response.status,
+        message: error.response.data?.message || "Dataverse API error",
+        requestUrl: error.response.data?.requestUrl,
+      };
+    }
+    throw {
+      status: 500,
+      message: "Internal server error while calling Dataverse",
+    };
+  }
+};
+
+export const fetchDatasetForUploadFile = async (
+  apiKey: string
+): Promise<any> => {
+  const runtimeConfig = getRuntimeConfig();
+  const BASE = runtimeConfig.dataverse_api_base;
+  // const BASE = "https://demo.dataverse.org/api";
+  const searchParams = new URLSearchParams();
+  searchParams.append("apiKey", apiKey.toString());
+
+  try {
+    const response = await axios.get(
+      `${BASE}/mydata/retrieve?dvobject_types=Dataset&published_states=Published&published_states=Draft&role_ids=7`,
+      {
+        headers: {
+          "X-Dataverse-key": apiKey,
+        },
+      }
+    );
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response) {
