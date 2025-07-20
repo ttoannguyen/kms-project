@@ -30,6 +30,7 @@
     "keycloak-connect": "^26.1.1",
     "keycloak-js": "^26.2.0",
     "morgan": "^1.10.0",
+    "multer": "^2.0.2",
     "pg": "^8.16.0",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.24",

@@ -119,8 +119,8 @@ export const fetchDatasetForUploadFile = async (
   pageNumber: string
 ): Promise<any> => {
   const runtimeConfig = getRuntimeConfig();
-  const BASE = runtimeConfig.dataverse_api_base;
-  // const BASE = "https://demo.dataverse.org/api";
+  // const BASE = runtimeConfig.dataverse_api_base;
+  const BASE = "https://demo.dataverse.org/api";
   const searchParams = new URLSearchParams();
   searchParams.append("apiKey", apiKey.toString());
   searchParams.append("pageNumber", pageNumber.toString());

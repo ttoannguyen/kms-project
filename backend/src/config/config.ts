@@ -80,6 +80,7 @@ export default {
     "/file/getFile",
     "/file/getMetadata",
     "/file/getDownloadCount",
+    "/file//uploadFile",
     "/metadataBlock/getAllMetadataBlock",
     "/metadataBlock/getMetadataItem",
     "/admin/check-keycloak",
