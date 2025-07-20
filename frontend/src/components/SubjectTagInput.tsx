@@ -24,12 +24,17 @@ export default function SubjectTagInput({
   onChange: (val: string[]) => void;
 }) {
   const predefinedSubjects: string[] = [
-    "climate",
-    "soil",
-    "crop yield",
-    "farmer behavior",
-    "irrigation",
-    "fertilizer",
+    "Agricultural Sciences",
+    "Environmental Sciences",
+    "Ecology",
+    "Earth and Environmental Sciences",
+    "Computer and Information Science",
+    "Engineering",
+    "Geospatial",
+    "Social Sciences",
+    "Statistics",
+    "Education",
+    "Other",
   ];
 
   const [open, setOpen] = useState(false);
