@@ -3,23 +3,26 @@ import { useCallback } from "react";
 import { Upload } from "lucide-react";
 
 const FileDropZone = ({
-  files,
-  onFilesSelected,
+  file,
+  onFileSelected,
 }: {
-  files: File[];
-  onFilesSelected: (files: File[]) => void;
+  file: File | null;
+  onFileSelected: (file: File) => void;
 }) => {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      onFilesSelected([...files, ...acceptedFiles]);
+      if (acceptedFiles.length > 0) {
+        onFileSelected(acceptedFiles[0]); // chỉ lấy file đầu tiên
+      }
     },
-    [files, onFilesSelected]
+    [onFileSelected]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    multiple: true,
+    multiple: false, // ❌ Chỉ cho 1 file
   });
+
   return (
     <div
       {...getRootProps()}
@@ -28,10 +31,12 @@ const FileDropZone = ({
       <input {...getInputProps()} />
       {isDragActive ? (
         <p>📥 Thả file vào đây...</p>
+      ) : file ? (
+        <p>📄 {file.name}</p>
       ) : (
-        <div className="flex items-center flex-col    ">
+        <div className="flex items-center flex-col">
           <Upload size={40} />
-          <p>Select a file or drag and drop files here.</p>
+          <p>Select a file or drag and drop here.</p>
         </div>
       )}
     </div>

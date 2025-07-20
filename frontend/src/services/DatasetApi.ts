@@ -63,10 +63,13 @@ const datasetApi = {
     }
   },
 
-  getDatasetForUploadFile: async (apiKey: string): Promise<any> => {
+  getDatasetForUploadFile: async (
+    apiKey: string,
+    pageNumber: number
+  ): Promise<any> => {
     try {
       const response = await axios.get(
-        `${apiUrl}/dataset/getDatasetForUploadFile?apiKey=${apiKey}`
+        `${apiUrl}/dataset/getDatasetForUploadFile?apiKey=${apiKey}&pageNumber=${pageNumber}`
       );
       return response.data;
     } catch (error) {

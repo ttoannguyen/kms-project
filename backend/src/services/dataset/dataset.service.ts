@@ -115,17 +115,19 @@ export const fetchDownloadSize = async (
 };
 
 export const fetchDatasetForUploadFile = async (
-  apiKey: string
+  apiKey: string,
+  pageNumber: string
 ): Promise<any> => {
   const runtimeConfig = getRuntimeConfig();
   const BASE = runtimeConfig.dataverse_api_base;
   // const BASE = "https://demo.dataverse.org/api";
   const searchParams = new URLSearchParams();
   searchParams.append("apiKey", apiKey.toString());
+  searchParams.append("pageNumber", pageNumber.toString());
 
   try {
     const response = await axios.get(
-      `${BASE}/mydata/retrieve?dvobject_types=Dataset&published_states=Published&published_states=Draft&role_ids=7`,
+      `${BASE}/mydata/retrieve?selected_page=${pageNumber}&dvobject_types=Dataset&published_states=Published&published_states=Draft&role_ids=7`,
       {
         headers: {
           "X-Dataverse-key": apiKey,

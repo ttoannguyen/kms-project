@@ -31,18 +31,34 @@ import LocationSelector from "@/components/LocationSelector";
 import datasetApi from "@/services/DatasetApi";
 import axios from "axios";
 import { toast } from "sonner";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
+import OneFilePreview from "@/components/OneFilePreview";
 
 const UploadFile = () => {
   // const baseURL = import.meta.env.VITE_API_BASE_URL;
 
   const baseURL = "https://demo.dataverse.org";
-  const [files, setFiles] = useState<File[]>([]);
+  // const [files, setFiles] = useState<File[]>([]);
+  const [file, setFile] = useState<File | null>(null);
+  const [fileName, setFileName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [restrict, setRestrict] = useState<string>("false");
+  const [categories, setCategories] = useState<string[]>([]);
 
   const [apiToken, setApiToken] = useState<string>("");
   const [dataset, setDataset] = useState<string>("");
   const [subjects, setSubjects] = useState<string[]>([]);
   const [date, setDate] = useState<Date | undefined>();
   const [selectedLocation, setSelectedLocation] = useState("");
+  const [datasetForUploadFiles, setDatasetForUploadFiles] = useState<any>(null);
+  const [author, setAuthor] = useState<string>("");
+  const [producer, setProducer] = useState<string>("");
+  const [technical, setTechnical] = useState<string>("");
 
   const languageOptions = [
     { code: "vi", name: "Vietnamese (vi)" },
@@ -58,21 +74,36 @@ const UploadFile = () => {
     { label: "Khác", value: "other" },
   ];
 
-  const [language, setLanguage] = useState<string>("");
+  const [selectedStakeholders, setSelectedStakeholders] = useState<string[]>(
+    []
+  );
 
-  const handleFileDelete = (fileToDelete: File) => {
-    const updateFile = files.filter((file) => file !== fileToDelete);
-
-    setFiles(updateFile);
+  const toggleCheckbox = (value: string) => {
+    setSelectedStakeholders((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    );
   };
 
-  const getDatasetForUploadFile = async (): Promise<void> => {
+  const [language, setLanguage] = useState<string>("");
+
+  // const handleFileDelete = (fileToDelete: File) => {
+  //   const updateFile = files.filter((file) => file !== fileToDelete);
+
+  //   setFiles(updateFile);
+  // };
+
+  const getDatasetForUploadFile = async (pageNumber: number): Promise<void> => {
     if (apiToken !== "") {
       try {
-        const datasetForUploadFile = await datasetApi.getDatasetForUploadFile(
-          apiToken
+        const tempDataset = await datasetApi.getDatasetForUploadFile(
+          apiToken,
+          pageNumber
         );
-        console.log(datasetForUploadFile);
+
+        console.log(tempDataset);
+        if (tempDataset) {
+          setDatasetForUploadFiles(tempDataset);
+        }
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error(
@@ -96,29 +127,119 @@ const UploadFile = () => {
     }
   };
 
+  useEffect(() => {
+    const getInitStateForm = () => {
+      if (file) {
+        setFileName(file.name);
+      }
+    };
+    getInitStateForm();
+  }, [file]);
+
+  const handleSubmit = async (): Promise<void> => {
+    if (!file) {
+      toast.error("Please upload a file.", toastErrorStyle);
+      return;
+    }
+
+    if (!apiToken?.trim()) {
+      toast.error("API Token is required.", toastErrorStyle);
+      return;
+    }
+
+    if (!fileName.trim()) {
+      toast.error("File name is required.", toastErrorStyle);
+      return;
+    }
+
+    if (!dataset) {
+      toast.error("Please select a dataset.", toastErrorStyle);
+      return;
+    }
+
+    if (!date) {
+      toast.error("Please select a Date Collected.", toastErrorStyle);
+      return;
+    }
+    if (!author.trim()) {
+      toast.error("Author/Creator is required.", toastErrorStyle);
+      return;
+    }
+
+    if (!language?.trim()) {
+      toast.error("Please select a language.", toastErrorStyle);
+      return;
+    }
+
+    // Cảnh báo không bắt buộc
+    if (!description.trim()) {
+      toast.warning("Description is recommended.", toastWarningStyle);
+    }
+
+    if (!date) {
+      toast.warning("Date Collected is recommended.", toastWarningStyle);
+    }
+
+    if (!selectedLocation) {
+      toast.warning("Location is recommended.", toastWarningStyle);
+    }
+
+    if (subjects.length === 0) {
+      toast.warning("Add at least one subject.", toastWarningStyle);
+    }
+
+    if (categories.length === 0) {
+      toast.warning("Select at least one category.", toastWarningStyle);
+    }
+
+    // Nếu đã qua hết điều kiện, tiếp tục submit
+    try {
+      // TODO: Gửi file và metadata đến backend ở đây
+      toast.success("Submitting...");
+      // await yourUploadFunction();
+    } catch (err) {
+      toast.error("Upload failed.");
+    }
+  };
+
+  // Style dùng chung cho toast lỗi
+  const toastErrorStyle = {
+    style: {
+      backgroundColor: "#fee2e2",
+      color: "#b91c1c",
+      marginBottom: "50px",
+      fontSize: "16px",
+    },
+  };
+
+  const toastWarningStyle = {
+    style: {
+      backgroundColor: "#fef3c7", // vàng nhạt
+      color: "#78350f", // nâu đậm hơn cho dễ đọc
+      fontSize: "16px",
+      fontWeight: "500",
+      marginBottom: "50px",
+      boxShadow: "0 0 10px rgba(0,0,0,0.1)",
+    },
+  };
+
   return (
     <div className="w-full ">
       <form
         className="flex flex-col items-center"
         onSubmit={(e) => {
           e.preventDefault();
+          handleSubmit();
         }}
       >
         <div className="w-full ">
-          <FileDropZone files={files} onFilesSelected={setFiles} />
+          <FileDropZone file={file} onFileSelected={setFile} />
         </div>
 
         <div className="w-full">
-          {files.length > 0 && (
+          {file && (
             <ul className="mt-4 text-left text-sm">
-              {files.map((file, i) => (
-                <FilePreview
-                  key={i}
-                  file={file}
-                  index={i}
-                  onDelete={handleFileDelete}
-                />
-              ))}
+              <OneFilePreview file={file} onDelete={() => setFile(null)} />
             </ul>
           )}
         </div>
@@ -129,7 +250,7 @@ const UploadFile = () => {
               className="w-full justify-between flex "
               htmlFor="input_api_token"
             >
-              <span className="w-[20%]"> API Token</span>
+              <span className="w-[20%]"> API Token *</span>
               <div className="flex flex-col w-[70%]">
                 <Input
                   type="text"
@@ -146,14 +267,6 @@ const UploadFile = () => {
                   >
                     Get API TOKEN
                   </a>
-                  <Button
-                    variant="outline"
-                    type="button"
-                    className="cursor-pointer"
-                    onClick={getDatasetForUploadFile}
-                  >
-                    Get Datasets
-                  </Button>
                 </div>
               </div>
             </label>
@@ -162,36 +275,113 @@ const UploadFile = () => {
               className="w-full justify-between flex mt-4"
               htmlFor="input_file_name"
             >
-              <span className="w-[20%]">File name</span>
+              <span className="w-[20%]">File name *</span>
               <div className="flex flex-col w-[70%]">
                 <Input
                   type="text"
                   className=""
                   id="input_file_name"
-                  value={apiToken}
-                  onChange={(e) => setApiToken(e.target.value)}
+                  value={fileName}
+                  onChange={(e) => setFileName(e.target.value)}
                 />
               </div>
             </label>
 
             <label className="w-full justify-between flex mt-4">
-              <span className="w-[20%]">Dataset</span>
+              <span className="w-[20%]">Dataset *</span>
               <div className="flex flex-col w-[70%]">
-                <Select onValueChange={(value) => setDataset(value)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a fruit" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Fruits</SelectLabel>
-                      <SelectItem value="apple">Apple</SelectItem>
-                      <SelectItem value="banana">Banana</SelectItem>
-                      <SelectItem value="blueberry">Blueberry</SelectItem>
-                      <SelectItem value="grapes">Grapes</SelectItem>
-                      <SelectItem value="pineapple">Pineapple</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                {!datasetForUploadFiles ? (
+                  <Button
+                    variant="outline"
+                    type="button"
+                    className="cursor-pointer w-[30%]"
+                    onClick={() => getDatasetForUploadFile(1)}
+                  >
+                    Get Datasets
+                  </Button>
+                ) : (
+                  <Select onValueChange={(value) => setDataset(value)}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Dataset" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {datasetForUploadFiles.data.items.map((data) => (
+                          <div key={data.entity_id}>
+                            <SelectItem value="apple">
+                              <div className="flex justify-between flex-wrap gap-2 items-center w-full">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className="mr-2"> {data.name}</span>
+                                  {data.is_deaccesioned && (
+                                    <span className="px-2 py-1 text-xs font-semibold bg-gray-500 text-white rounded">
+                                      Deaccessioned
+                                    </span>
+                                  )}
+                                  {data.is_draft_state && (
+                                    <span className="px-2 py-1 text-xs font-semibold bg-yellow-500 text-white rounded">
+                                      Draft
+                                    </span>
+                                  )}
+                                  {data.is_in_review_state && (
+                                    <span className="px-2 py-1 text-xs font-semibold bg-blue-500 text-white rounded">
+                                      In Review
+                                    </span>
+                                  )}
+                                  {data.is_published && (
+                                    <span className="px-2 py-1 text-xs font-semibold bg-green-600 text-white rounded">
+                                      Published
+                                    </span>
+                                  )}
+                                  {data.is_unpublished_state && (
+                                    <span className="px-2 py-1 text-xs font-semibold bg-red-600 text-white rounded">
+                                      Unpublished
+                                    </span>
+                                  )}
+                                  {data.is_valid && (
+                                    <span className="px-2 py-1 text-xs font-semibold bg-purple-500 text-white rounded">
+                                      Valid
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="text-[12px] text-gray-600 font-medium">
+                                  {data.name_of_dataverse}
+                                </div>
+                              </div>
+                            </SelectItem>
+                          </div>
+                        ))}
+
+                        {datasetForUploadFiles && (
+                          <Pagination>
+                            <PaginationContent>
+                              {datasetForUploadFiles.data.pagination.pageNumberList.map(
+                                (pageNumber) => (
+                                  <PaginationItem key={pageNumber}>
+                                    <PaginationLink
+                                      href="#"
+                                      isActive={
+                                        pageNumber ===
+                                        datasetForUploadFiles.data.pagination
+                                          .selectedPageNumber
+                                      }
+                                      className="mt-2 text-[12px]"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        getDatasetForUploadFile(pageNumber);
+                                      }}
+                                    >
+                                      {pageNumber}
+                                    </PaginationLink>
+                                  </PaginationItem>
+                                )
+                              )}
+                            </PaginationContent>
+                          </Pagination>
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </label>
 
@@ -199,13 +389,13 @@ const UploadFile = () => {
               className="w-full justify-between flex mt-4"
               htmlFor="input_file_description"
             >
-              <span className="w-[20%]">Description</span>
+              <span className="w-[20%]">Description </span>
               <div className="flex flex-col w-[70%]">
                 <Textarea
                   className=""
                   id="input_file_description"
-                  value={apiToken}
-                  onChange={(e) => setApiToken(e.target.value)}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
             </label>
@@ -216,7 +406,13 @@ const UploadFile = () => {
             >
               <span className="w-[20%]">Restrict</span>
               <div className="flex flex-col w-[70%]">
-                <RadioGroup defaultValue="false">
+                <RadioGroup
+                  defaultValue="false"
+                  onValueChange={(value) => {
+                    setRestrict(value);
+                    console.log("Restrict:", value); // "true" hoặc "false"
+                  }}
+                >
                   <div className="flex items-center">
                     <RadioGroupItem
                       value="true"
@@ -240,7 +436,7 @@ const UploadFile = () => {
 
             <label
               className="w-full justify-between flex mt-4"
-              htmlFor="input_file_description"
+              htmlFor="input_file_categories"
             >
               <span className="w-[20%]">Categories</span>
               <div className="flex flex-col w-[70%]">
@@ -253,7 +449,7 @@ const UploadFile = () => {
                   defaultSelected={["Plot level data"]}
                   onChange={(selected) => {
                     console.log("Selected categories:", selected);
-                    // setCategories(selected) // nếu bạn dùng useState
+                    setCategories(selected); // <- Gán vào state
                   }}
                 />
               </div>
@@ -273,7 +469,7 @@ const UploadFile = () => {
               className="w-full justify-between flex mt-4"
               htmlFor="input_date"
             >
-              <span className="w-[20%]">Date Collected</span>
+              <span className="w-[20%]">Date Collected *</span>
               <div className="flex flex-col w-[70%]">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -324,8 +520,8 @@ const UploadFile = () => {
                   type="text"
                   className=""
                   id="input_producer"
-                  value={apiToken}
-                  onChange={(e) => setApiToken(e.target.value)}
+                  value={producer}
+                  onChange={(e) => setProducer(e.target.value)}
                 />
               </div>
             </label>
@@ -334,23 +530,23 @@ const UploadFile = () => {
               className="w-full justify-between flex mt-4"
               htmlFor="input_author"
             >
-              <span className="w-[20%]"> Author / Creator</span>
+              <span className="w-[20%]"> Author / Creator *</span>
               <div className="flex flex-col w-[70%]">
                 <Input
                   type="text"
                   className=""
                   id="input_author"
-                  value={apiToken}
-                  onChange={(e) => setApiToken(e.target.value)}
+                  value={author}
+                  onChange={(e) => setAuthor(e.target.value)}
                 />
               </div>
             </label>
 
             <label
               className="w-full justify-between flex mt-4"
-              htmlFor="input_author"
+              htmlFor="input_language"
             >
-              <span className="w-[20%]">Language</span>
+              <span className="w-[20%]">Language *</span>
               <div className="flex flex-col w-[70%]">
                 <Select value={language} onValueChange={setLanguage}>
                   <SelectTrigger id="language" className="w-full">
@@ -376,8 +572,8 @@ const UploadFile = () => {
                 <Textarea
                   id="input_technicalNotes"
                   placeholder="Ví dụ: Dữ liệu thu thập bằng drone, xử lý bằng QGIS, lọc nhiễu bằng thuật toán XYZ..."
-                  // value={form.technicalNotes}
-                  // onChange={(e) => setForm({ ...form, technicalNotes: e.target.value })}
+                  value={technical}
+                  onChange={(e) => setTechnical(e.target.value)}
                 />
               </div>
             </label>
@@ -386,7 +582,7 @@ const UploadFile = () => {
               className="w-full justify-between flex mt-4"
               htmlFor="input_stakeholder"
             >
-              <span className="w-[20%]">Stakeholder</span>
+              <span className="w-[20%]">Stakeholder *</span>
               <div className="flex flex-col w-[70%]">
                 {stakeholderOptions.map((opt) => (
                   <div
@@ -395,15 +591,8 @@ const UploadFile = () => {
                   >
                     <Checkbox
                       id={opt.value}
-                      // checked={form.stakeholders.includes(opt.value)}
-                      // onCheckedChange={(checked) => {
-                      //   setForm((prev) => ({
-                      //     ...prev,
-                      //     stakeholders: checked
-                      //       ? [...prev.stakeholders, opt.value]
-                      //       : prev.stakeholders.filter((v) => v !== opt.value),
-                      //   }));
-                      // }}
+                      checked={selectedStakeholders.includes(opt.value)}
+                      onCheckedChange={() => toggleCheckbox(opt.value)}
                       className="cursor-pointer"
                     />
                     <Label htmlFor={opt.value}>{opt.label}</Label>
@@ -413,6 +602,10 @@ const UploadFile = () => {
             </label>
           </div>
         </div>
+
+        <Button type="submit" className="px-4 py-2 cursor-pointer">
+          Upload File
+        </Button>
       </form>
     </div>
   );
