@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 
 const CATEGORY_GROUPS = [
   {
-    label: "Dữ liệu khảo sát",
+    label: "Survey Data",
     items: [
       "Plot level data",
       "Household survey data",
@@ -13,7 +13,7 @@ const CATEGORY_GROUPS = [
     ],
   },
   {
-    label: "Đo đạc & môi trường",
+    label: "Surveying & Environment",
     items: [
       "Soil data",
       "Water quality data",
@@ -22,11 +22,11 @@ const CATEGORY_GROUPS = [
     ],
   },
   {
-    label: "Tài liệu & công cụ",
+    label: " Documents & Tools",
     items: ["Survey forms", "Interview transcripts", "Data collection tools"],
   },
   {
-    label: "Tổng hợp & phân tích",
+    label: "Synthesis & Analysis",
     items: [
       "Statistical reports",
       "Data analysis results",
@@ -34,11 +34,11 @@ const CATEGORY_GROUPS = [
     ],
   },
   {
-    label: "GIS & không gian",
+    label: "GIS & Spatial",
     items: ["GIS shapefiles", "Satellite imagery", "Geolocation data"],
   },
   {
-    label: "Khác",
+    label: "Other",
     items: ["Photos and media", "Policy documents", "Training materials"],
   },
 ];

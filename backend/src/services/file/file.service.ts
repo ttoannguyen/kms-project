@@ -126,3 +126,32 @@ export const fetchDownloadCount = async (
     };
   }
 };
+
+export const uploadFileService = async (
+  apiKey: string,
+  formData: any
+): Promise<any> => {
+  const searchParams = new URLSearchParams();
+
+  searchParams.append("apiKey", apiKey.toString());
+  console.log(apiKey);
+
+  console.log(formData);
+
+  try {
+    // const response = await axios.get(`${BASE}/files/${id}/downloadCount`);
+    // return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw {
+        status: error.response.status,
+        message: error.response.data?.message || "Dataverse API error",
+        requestUrl: error.response.data?.requestUrl,
+      };
+    }
+    throw {
+      status: 500,
+      message: "Internal server error while calling Dataverse",
+    };
+  }
+};
