@@ -1,6 +1,13 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "./ui/button";
-import { Home, Database, FolderPlus, CirclePlus, Upload } from "lucide-react";
+import {
+  Home,
+  Database,
+  FolderPlus,
+  CirclePlus,
+  Upload,
+  Calendar,
+} from "lucide-react";
 import { useState } from "react";
 
 interface MenuItem {
@@ -26,6 +33,12 @@ const menuItems: MenuItem[] = [
     icon: <Upload size={16} />,
     label: "Upload File",
     path: "/uploadFile",
+  },
+
+  {
+    icon: <Calendar size={16} />,
+    label: "Create Event",
+    path: "/createEvent",
   },
 ];
 

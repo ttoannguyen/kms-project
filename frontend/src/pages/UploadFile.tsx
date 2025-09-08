@@ -62,6 +62,8 @@ const UploadFile = () => {
         if (tempDataset) {
           setDatasetForUploadFiles(tempDataset);
 
+          console.log(tempDataset);
+
           setLoading(false);
           toast.success("Get Dataset successfully", toastSuccessStyle);
           return;
@@ -237,7 +239,7 @@ const UploadFile = () => {
                 />
                 <div className=" mt-2">
                   <a
-                    href={`${baseURL}/dataverseuser.xhtml?selectTab=apiTokenTab`}
+                    href={`${dataverseHost}/dataverseuser.xhtml?selectTab=apiTokenTab`}
                     target="_blank"
                     className="text-hover-underline-blue mr-8"
                   >
@@ -282,52 +284,55 @@ const UploadFile = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {datasetForUploadFiles.data.items.map((data, index) => (
-                          <div key={index}>
-                            <SelectItem
-                              value={data.global_id + "_" + data.versionId}
-                            >
-                              <div className="flex justify-between flex-wrap gap-2 items-center w-full">
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <span className="mr-2"> {data.name}</span>
-                                  {data.is_deaccesioned && (
-                                    <span className="px-2 py-1 text-xs font-semibold bg-gray-500 text-white rounded">
-                                      Deaccessioned
-                                    </span>
-                                  )}
-                                  {data.is_draft_state && (
-                                    <span className="px-2 py-1 text-xs font-semibold bg-yellow-500 text-white rounded">
-                                      Draft
-                                    </span>
-                                  )}
-                                  {data.is_in_review_state && (
-                                    <span className="px-2 py-1 text-xs font-semibold bg-blue-500 text-white rounded">
-                                      In Review
-                                    </span>
-                                  )}
-                                  {data.is_published && (
-                                    <span className="px-2 py-1 text-xs font-semibold bg-green-600 text-white rounded">
-                                      Published
-                                    </span>
-                                  )}
-                                  {data.is_unpublished_state && (
-                                    <span className="px-2 py-1 text-xs font-semibold bg-red-600 text-white rounded">
-                                      Unpublished
-                                    </span>
-                                  )}
-                                  {data.is_valid && (
-                                    <span className="px-2 py-1 text-xs font-semibold bg-purple-500 text-white rounded">
-                                      Valid
-                                    </span>
-                                  )}
-                                </div>
-                                <div className="text-[12px] text-gray-600 font-medium">
-                                  {data.name_of_dataverse}
-                                </div>
+                        {datasetForUploadFiles &&
+                          datasetForUploadFiles.data.items.map(
+                            (data, index) => (
+                              <div key={index}>
+                                <SelectItem
+                                  value={data.global_id + "_" + data.versionId}
+                                >
+                                  <div className="flex justify-between flex-wrap gap-2 items-center w-full">
+                                    <div className="flex flex-wrap items-center gap-2">
+                                      <span className="mr-2"> {data.name}</span>
+                                      {data.is_deaccesioned && (
+                                        <span className="px-2 py-1 text-xs font-semibold bg-gray-500 text-white rounded">
+                                          Deaccessioned
+                                        </span>
+                                      )}
+                                      {data.is_draft_state && (
+                                        <span className="px-2 py-1 text-xs font-semibold bg-yellow-500 text-white rounded">
+                                          Draft
+                                        </span>
+                                      )}
+                                      {data.is_in_review_state && (
+                                        <span className="px-2 py-1 text-xs font-semibold bg-blue-500 text-white rounded">
+                                          In Review
+                                        </span>
+                                      )}
+                                      {data.is_published && (
+                                        <span className="px-2 py-1 text-xs font-semibold bg-green-600 text-white rounded">
+                                          Published
+                                        </span>
+                                      )}
+                                      {data.is_unpublished_state && (
+                                        <span className="px-2 py-1 text-xs font-semibold bg-red-600 text-white rounded">
+                                          Unpublished
+                                        </span>
+                                      )}
+                                      {data.is_valid && (
+                                        <span className="px-2 py-1 text-xs font-semibold bg-purple-500 text-white rounded">
+                                          Valid
+                                        </span>
+                                      )}
+                                    </div>
+                                    <div className="text-[12px] text-gray-600 font-medium">
+                                      {data.name_of_dataverse}
+                                    </div>
+                                  </div>
+                                </SelectItem>
                               </div>
-                            </SelectItem>
-                          </div>
-                        ))}
+                            )
+                          )}
 
                         {datasetForUploadFiles && (
                           <Pagination>

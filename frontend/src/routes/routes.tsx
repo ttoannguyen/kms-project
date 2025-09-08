@@ -18,6 +18,7 @@ import SysLogin from "@/pages/admin/sys/Login";
 import SysLayout from "@/pages/admin/sys/Layout";
 import SysProtectedRoute from "./SysProtectedRoute";
 import UploadFile from "@/pages/UploadFile";
+import CreateEvent from "@/pages/CreateEvent";
 
 export const routes = createBrowserRouter([
   {
@@ -40,6 +41,11 @@ export const routes = createBrowserRouter([
         path: "uploadFile",
         element: <UploadFile />,
       },
+
+      {
+        path: "createEvent",
+        element: <CreateEvent />,
+      },
     ],
   },
   {
@@ -53,6 +59,7 @@ export const routes = createBrowserRouter([
       { index: true, element: <AdminDashboard /> },
       { path: "users", element: <AdminUsers /> },
       { path: "news", element: <AdminNewsPage /> },
+      { path: "createEvent", element: <CreateEvent /> },
     ],
   },
   {
