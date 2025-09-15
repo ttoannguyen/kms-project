@@ -31,3 +31,19 @@ export const getDownloadSize = async (_req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to load counts" });
   }
 };
+
+export const getDatasetForUploadFile = async (_req: Request, res: Response) => {
+  // const id: string = _req.query.id as string;
+  const apiKey: string = _req.query.apiKey as string;
+  const pageNumber: string = _req.query.pageNumber as string;
+
+  try {
+    const myDataset = await datasetService.fetchDatasetForUploadFile(
+      apiKey,
+      pageNumber
+    );
+    res.json(myDataset);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to load counts" });
+  }
+};

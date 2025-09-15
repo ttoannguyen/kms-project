@@ -370,63 +370,71 @@ const CreateDataverse = () => {
 
             {metadataBlock !== null &&
               metadataBlock?.data.map((metadata) => (
-                <div className="flex my-[5px]" key={metadata.id}>
-                  <label htmlFor={`metadata_${metadata.id}`}>
-                    <input
-                      type="checkbox"
-                      name=""
-                      id={`metadata_${metadata.id}`}
-                      className={
-                        checkMetadataDefault
-                          ? "mr-2 cursor-no-drop"
-                          : "mr-2 cursor-pointer"
-                      }
-                      checked={metadata.checked}
-                      disabled={checkMetadataDefault}
-                      onChange={() =>
-                        setMetadataBlock((prev) => {
-                          if (!prev) return prev; // hoặc null
+                <div className="flex my-[5px] flex-col" key={metadata.id}>
+                  <div className="flex">
+                    <label htmlFor={`metadata_${metadata.id}`}>
+                      <input
+                        type="checkbox"
+                        name=""
+                        id={`metadata_${metadata.id}`}
+                        className={
+                          checkMetadataDefault
+                            ? "mr-2 cursor-no-drop"
+                            : "mr-2 cursor-pointer"
+                        }
+                        checked={metadata.checked}
+                        disabled={checkMetadataDefault}
+                        onChange={() =>
+                          setMetadataBlock((prev) => {
+                            if (!prev) return prev; // hoặc null
 
-                          return {
-                            ...prev,
-                            data: prev.data.map((item) =>
-                              item.id === metadata.id
-                                ? { ...item, checked: !item.checked }
-                                : item
-                            ),
-                          };
-                        })
-                      }
-                    />
-                    {metadata.displayName}
-                  </label>
-                  {!metadata.checked ? (
-                    <button
-                      onClick={() =>
-                        setDisplayOptionId({
-                          id: metadata.id,
-                          readOnly: false,
-                        })
-                      }
-                      className="ml-4 text-hover-underline-blue cursor-pointer"
-                    >
-                      {"[+] View fields"}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() =>
-                        setDisplayOptionId({
-                          id: metadata.id,
-                          readOnly: true,
-                        })
-                      }
-                      className="ml-4 text-hover-underline-blue cursor-pointer"
-                    >
-                      {"[+] View fields + set as hidden, required, or optional"}
-                    </button>
-                  )}
+                            return {
+                              ...prev,
+                              data: prev.data.map((item) =>
+                                item.id === metadata.id
+                                  ? { ...item, checked: !item.checked }
+                                  : item
+                              ),
+                            };
+                          })
+                        }
+                      />
+                      {metadata.displayName}
+                    </label>
+                    {!metadata.checked ? (
+                      <button
+                        onClick={() =>
+                          setDisplayOptionId({
+                            id: metadata.id,
+                            readOnly: true,
+                          })
+                        }
+                        className="ml-4 text-hover-underline-blue cursor-pointer"
+                      >
+                        {"[+] View fields"}
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          setDisplayOptionId({
+                            id: metadata.id,
+                            readOnly: false,
+                          })
+                        }
+                        className="ml-4 text-hover-underline-blue cursor-pointer"
+                      >
+                        {
+                          "[+] View fields + set as hidden, required, or optional"
+                        }
+                      </button>
+                    )}
+                  </div>
                   {displayOptionId && displayOptionId.id === metadata.id && (
-                    <div className="w-full bg-red-700"></div>
+                    <FieldsMetadata
+                      readOnly={displayOptionId.readOnly}
+                      name={metadata.name}
+                      setDisplayOptionId={setDisplayOptionId}
+                    />
                   )}
                 </div>
               ))}

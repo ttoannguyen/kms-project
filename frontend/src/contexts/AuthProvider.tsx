@@ -40,8 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const initKeycloak = async () => {
       try {
         const res = await api.get("/admin/get-config");
-        const rawConfig = res.data; 
-
+        const rawConfig = res.data;
 
         const config: Record<string, string> = rawConfig.reduce(
           (acc: Record<string, string>, curr: any) => {
@@ -51,7 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           {}
         );
 
-        console.log(config)
+        console.log(config);
         console.log("keycloak client_id", config["keycloak_client_id"]);
 
         const hasValidKeycloakConfig =

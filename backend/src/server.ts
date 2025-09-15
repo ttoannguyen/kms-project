@@ -10,14 +10,14 @@ const startServer = async () => {
     await AppDataSource.initialize();
     console.log("Connected to Postgres");
 
-    await initDefaultAppConfigKeys(); 
+    await initDefaultAppConfigKeys();
     await loadRuntimeConfig();
     app.listen(config.server.port, () => {
       console.log(`Server running on http://localhost:${config.server.port}`);
     });
   } catch (err) {
     console.error("Error during server startup:", err);
-    process.exit(1); 
+    process.exit(1);
   }
 };
 

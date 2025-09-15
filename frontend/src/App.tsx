@@ -7,15 +7,17 @@ import "./styles/globals.css";
 import "./styles/swiper.css";
 import { SysAuthProvider } from "./contexts/SysAuthContext";
 import { KeycloakConfigProvider } from "./contexts/KeycloakConfigContext ";
+import { Toaster } from "sonner";
 
 const App = () => {
   return (
     <KeycloakConfigProvider>
-    <AuthProvider>
-      <SysAuthProvider>
-        <RouterProvider router={routes} />
-      </SysAuthProvider>
-    </AuthProvider>
+      <AuthProvider>
+        <SysAuthProvider>
+          <RouterProvider router={routes} />
+          <Toaster />
+        </SysAuthProvider>
+      </AuthProvider>
     </KeycloakConfigProvider>
   );
 };
